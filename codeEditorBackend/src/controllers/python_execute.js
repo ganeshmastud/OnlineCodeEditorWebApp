@@ -21,9 +21,10 @@ const python_execute = async (req,res,next) =>{
     const {userId,select_language,codearea }= req.body; 
     
         // console.log("path :",__dirname)
-    const code_dir = '../CodeFiles'
-    
-    let writecode = fs.createWriteStream( path.join(code_dir, 'dummy.py')) //,{flags:'a'} flag is set if tryies to append file
+    const code_dir = '../CodeFiles';
+    const pyfilepath = path.resolve('CodeFiles', 'dummy.py')  //important when trying to access the pat using path.jion error was thrown
+    console.log("path resolve :",pyfilepath);
+    let writecode = fs.createWriteStream( pyfilepath) //,{flags:'a'} flag is set if tryies to append file
     // console.log("write code :", writecode )
     writecode.write('\n')
     writecode.write(req.body.codearea)
@@ -33,7 +34,7 @@ const python_execute = async (req,res,next) =>{
     writecode.on('error', error =>{
       console.log("error is :",error.message);
     })
-    const pyfilepath=path.join(code_dir,'dummy.py')
+    // const pyfilepath=path.join(code_dir, 'dummy.py')
    
     const filter = {"_id" : userId}
     const update = {language:select_language, path:""};
@@ -51,11 +52,13 @@ const python_execute = async (req,res,next) =>{
         return;
     }
     console.log(`stdout: ${stdout}`);
+    res.status(200)
     res.send(stdout);
+    return;
     })
-
+     
     // res.send("ok");
-    next();
+    
     //  try {
     //     const user = await User.updateOne({id:userId},{$set:{code_files:}});
         
