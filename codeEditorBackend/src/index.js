@@ -25,7 +25,7 @@ const mongoose = require( 'mongoose' );
 const User = mongoose.model('User')
 app.get('/register', (req,res) =>{
   
-  const result = User.create({email:'johndoe@gmail.com',password:'johndoe',codeFiles:[{language:'c',path:''}]})
+  const result = User.create({email:'johnsnow@gmail.com',password:'johnsnow'})
   // console.log(User.find().pretty());
   // res.send(User.find().pretty())
   res.json(result)
