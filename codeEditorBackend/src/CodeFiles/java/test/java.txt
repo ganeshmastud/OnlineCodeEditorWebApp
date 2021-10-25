@@ -1,0 +1,187 @@
+require( '../data/init' );
+const writeToFileFn = require('./helpful_functions/writeToFile')
+const express = require('express')
+const app = express()
+const cors = require('cors')
+const bodyParser = require('body-parser')
+const { exec } = require("child_process");
+const fs = require('fs');
+const path = require('path')
+const mongoose = require( 'mongoose' );
+const User = mongoose.model('User')
+const nanoid = require('nanoid')
+
+
+
+const java_execute = async (req,res,next) =>{
+
+    try{
+        console.log("you are in java exec flie in controller");
+        
+        
+        let Promise = new Promise(function(Resolve, Reject) {
+
+            if(!req.body){
+                const error = new Error( 'no data received in request' );
+                error.status = 404;
+                Reject( error );
+            } else{
+                 Resolve( req.body); // when successful
+            }
+
+       
+        });
+
+
+        Promise.then((req_body) =>{
+        const {userId,select_language,codearea } = req_body;
+        const filter = {"_id" : userId}
+        let code_for_lang_present=false;
+        const code_dir = 'CodeFiles/java';
+
+        let javafilepath = '';
+        let java_exe_file = '';
+        let java_file_dir = '';
+        const if_filepath_exist_in_db = await User.find(filter)
+        // console.log("if_filepath_exist_in_db ",if_filepath_exist_in_db)
+        
+        if(if_filepath_exist_in_db[0].codeFiles.length>0){
+            if_filepath_exist_in_db[0].codeFiles.forEach(code_file =>{
+                // console.log("code_file ", code_file)
+                if(code_file.language === select_language){
+                    code_for_lang_present=true;
+                    java_file_dir = code_file.filepath
+                    // console.log("file path exist")
+                    return;
+                }
+            } )
+        }
+        return get_java_paths(code_for_lang_present, java_file_dir, javafilepath, java_exe_file);
+        })   
+        .then((paths_obj) =>{
+
+        })
+        
+            // console.log("path :",__dirname)
+        
+        // const pyfilepath=path.join(code_dir, 'dummy.py')
+        // console.log("userId ",userId)
+        
+        
+       
+        // console.log("if_filepath_exist_in_db ",if_filepath_exist_in_db[0].codeFiles);
+        const paths_obj = get_java_paths(code_for_lang_present, java_file_dir, javafilepath, java_exe_file);
+        java_file_dir = paths_obj.java_file_dir;
+        javafilepath = paths_obj.javafilepath;
+        java_exe_file = paths_obj.java_exe_file;
+        // console.log("paths_obj", paths_obj)
+        // console.log("writeToFileFn ",typeof writeToFileFn, writeToFileFn, javafilepath);
+        writeToFileFn(javafilepath)
+
+        console.log("javafilepath ",javafilepath)
+        let stdout = fileToExe(javafilepath, runExe(java_file_dir ,java_exe_file)) /*we don't req java_exe_file path here and 
+        for runExe we require director path not java class file path*/
+
+        // let exe_file = path.resolve(code_dir, c_exe_file)
+        // console.log("c_exe_file 2:",cpp_exe_file)
+        // let stdout = runExe(cpp_exe_file)
+        // stdout= runExe(cpp_exe_file+'.exe')
+        res.status(200)
+        res.send(stdout);
+    }
+    catch(error){
+        console.log(error.message)
+    }
+    
+
+        
+    
+}
+
+
+   async function get_java_paths(code_for_lang_present, java_file_dir, javafilepath, java_exe_file){
+        console.log("in get_jav_paths code_for_lang_present ",code_for_lang_present)
+
+        let exefile='';
+        let filepath='';
+        if(!code_for_lang_present){
+        
+        
+            const id = nanoid(5)
+            const java_path = 'java'+id+'.java'
+            java_file_dir = path.resolve(code_dir, 'java'+id)
+            this.exefile = 'Simple'//path.resolve(java_file_dir,'java'+id)
+            this.filepath =  path.resolve(java_file_dir, java_path)  //important when trying to access the pat using path.jion error was thrown
+            // console.log("path resolve :",pyfilepath);
+           await fs.mkdir(path.resolve('CodeFiles/java', java_file_dir), (err) => {
+                if (err) {
+                    return console.error(err);
+                }
+                console.log('Directory created successfully!');
+            });
+
+            let update = {language:select_language, filepath:java_file_dir};
+            // console.log("update ",update)
+            let doc = User.findOneAndUpdate(filter, {$push:{ codeFiles:{$each:[update]} }}, {
+                returnOriginal: false
+            })
+            // console.log("doc ",doc);
+            // return {java_file_dir,javafilepath,java_exe_file}
+        } else{
+            
+            await fs.readdir(path.resolve(java_file_dir), (err,files)=>{
+
+                if (err) {
+                    return console.error(err);
+                }
+                console.log("files[0] ",files[0])
+                this.filepath = path.resolve( java_file_dir,  files[0]);
+                this.exefile =  files[1]; //path.resolve( java_file_dir ,
+                // console.l og("javafilepath ",javafilepath, "java_exe_file ",java_exe_file)
+                 console.log("files[1] ",files[1])
+                 
+            })       
+        }
+        console.log("java_file_dir,javafilepath,java_exe_file ",java_file_dir,this.filepath ,this.exefile)
+        return {java_file_dir,javafilepath,java_exe_file};
+    }
+        
+
+const fileToExe = (javafilepath,runExe) => {
+    console.log("in fileToexe ",javafilepath)
+    exec(`javac ${javafilepath}` , (error, stdout, stderr) => {
+        if (error) {
+            console.log(`error: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.log(`stderr: ${stderr}`);
+            return;
+        }
+    })
+    return runExe;
+}
+
+const runExe =  (java_file_dir, java_exe_file) => {
+        console.log("in run exe ",java_exe_file)
+        exec(`java -cp ${java_file_dir}; ${java_exe_file}`, (error, stdout, stderr) => {
+        if (error) {
+            console.log(`error: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.log(`stderr: ${stderr}`);
+            return;
+        }
+        console.log(`stdout: ${stdout}`);
+        
+        return stdout;
+     
+    })
+}
+
+
+
+module.exports = {
+    java_execute
+}
