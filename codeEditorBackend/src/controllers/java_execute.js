@@ -12,7 +12,9 @@ const User = mongoose.model('User')
 const nanoid = require('nanoid')
 
 const  fspromises = require('fs/promises')
-console.log("readdir ", fspromises.readdir)
+// const makedir = reaquir('fs/promises/mkdir')
+
+// console.log("readdir ", fspromises.readdir)
 const java_execute = async (req,res,next) =>{
 
     try{
@@ -34,35 +36,36 @@ const java_execute = async (req,res,next) =>{
 
 
         await promise.then( async (req_body) =>{
-        const {userId,select_language,codearea } = req_body;
-        const filter = {"_id" : userId}
-        let code_for_lang_present=false;
-        const code_dir = 'CodeFiles/java';
+            const {userId,select_language,codearea } = req_body;
+            const filter = {"_id" : userId}
+            let code_for_lang_present=false;
+            const code_dir = 'CodeFiles/java';
 
-        let javafilepath = '';
-        let java_exe_file = '';
-        let java_file_dir = '';
-        const if_filepath_exist_in_db = await User.find(filter)
-        // console.log("if_filepath_exist_in_db ",if_filepath_exist_in_db[0])
+            let javafilepath = '';
+            let java_exe_file = '';
+            let java_file_dir = '';
+            const if_filepath_exist_in_db = await User.find(filter)
+            // console.log("if_filepath_exist_in_db ",if_filepath_exist_in_db[0])
         
-        if(if_filepath_exist_in_db[0].codeFiles.length>0){
-            if_filepath_exist_in_db[0].codeFiles.forEach(code_file =>{
-                // console.log("code_file ", code_file)
-                if(code_file.language === select_language){
-                    code_for_lang_present=true;
-                    java_file_dir = code_file.filepath
-                    // console.log("file path exist")
-                    // paths_obj={
-                    //     java_file_dir,
-                    //     java_exe_file,
-                    //     javafilepath
-                    // }
-                    return;
-                }
-            } )
-        }
+            if(if_filepath_exist_in_db[0].codeFiles.length>0){
+                if_filepath_exist_in_db[0].codeFiles.forEach(code_file =>{
+                    // console.log("code_file ", code_file)
+                    if(code_file.language === select_language){
+                        code_for_lang_present=true;
+                        java_file_dir = code_file.filepath
+                        // console.log("file path exist")
+                        // paths_obj={
+                        //     java_file_dir,
+                        //     java_exe_file,
+                        //     javafilepath
+                        // }
+                        return;
+                    }
+                } )
+            }
        
-        return get_java_paths(code_dir,codearea,code_for_lang_present, java_file_dir, javafilepath, java_exe_file);
+            return get_java_paths(code_dir,select_language,filter,codearea,code_for_lang_present, 
+                java_file_dir, javafilepath, java_exe_file);
         })   
         .then( async (paths_obj) =>{
                 // console.log(paths_obj);
@@ -117,7 +120,8 @@ const java_execute = async (req,res,next) =>{
 }
 
 
-   async function get_java_paths(code_dir, codearea,code_for_lang_present, java_file_dir, javafilepath, java_exe_file){
+   async function get_java_paths(code_dir,select_language,filter, codearea,
+    code_for_lang_present, java_file_dir, javafilepath, java_exe_file){
         // console.log("in get_jav_paths  ")
 
         let exefile='';
@@ -127,22 +131,30 @@ const java_execute = async (req,res,next) =>{
         
             const id = nanoid(5)
             const java_path = 'java'+id+'.java'
-            java_file_dir =  path.resolve(code_dir, 'java'+id)
+            java_file_dir = path.resolve(code_dir, 'java'+id)
             exefile = 'Simple'//path.resolve(java_file_dir,'java'+id)
             filepath =  path.resolve(java_file_dir, java_path)  //important when trying to access the pat using path.jion error was thrown
             // console.log("path resolve :",pyfilepath);
-            fs.mkdir(path.resolve('CodeFiles/java', java_file_dir), (err) => {
-                if (err) {
-                    return console.error(err);
-                }
-                console.log('Directory created successfully!');
-            });
-
             let update = {language:select_language, filepath:java_file_dir};
             // console.log("update ",update)
-            let doc = User.findOneAndUpdate(filter, {$push:{ codeFiles:{$each:[update]} }}, {
+            let doc = await User.findOneAndUpdate(filter, {$push:{ codeFiles:{$each:[update]} }}, {
                 returnOriginal: false
             })
+            // fs.mkdir(path.resolve('CodeFiles/java', java_file_dir), (err) => {
+            //     if (err) {
+            //         return console.error(err);
+            //     }
+            //     console.log('Directory created successfully!');
+            // });
+            console.log("trying to load first")
+            try {
+            
+                    await fspromises.mkdir(path.resolve('CodeFiles/java', java_file_dir));
+                    
+            } catch (err) {
+                console.error(err);
+            }
+            
             // console.log("doc ",doc);
             // return {java_file_dir,javafilepath,java_exe_file}
         } else{
