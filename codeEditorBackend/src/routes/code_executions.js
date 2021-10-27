@@ -6,11 +6,15 @@ const {java_execute} = require( '../controllers/java_execute' );
 const {c_execute} = require( '../controllers/c_execute' );
 const {cpp_execute} = require( '../controllers/cpp_execute' );
 
+const {authenticate} = require('../middleware/auth')
+const {request_data_code_size} =require('../middleware/req_datasize')
 const router = express.Router();
 // console.log("python_execute ",python_execute)
-router.post('/python',jsonParser,python_execute);
-router.post('/java',jsonParser,java_execute);
-router.post('/c',jsonParser,c_execute);
-router.post('/cpp',jsonParser,cpp_execute);
+router.post('/python',jsonParser,request_data_code_size,authenticate,python_execute);
+router.post('/java',jsonParser,authenticate,java_execute);
+router.post('/c',jsonParser,authenticate,c_execute);
+router.post('/cpp',jsonParser,authenticate,cpp_execute);
 
 module.exports = router;
+
+

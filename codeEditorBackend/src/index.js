@@ -10,6 +10,11 @@ const path = require('path')
 
 const code_execution = require( './routes/code_executions' );
 const indexRouter = require( './routes/index' );
+const authorize_user = require( './routes/auth' );
+
+
+
+const errorHandler = require('./middleware/error');
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors({
         origin:"*"
@@ -17,22 +22,31 @@ app.use(cors({
 )
 var jsonParser = bodyParser.json();
 // console.log("code_execution :",code_execution); 
+
+
+
+
+
+
 // api routers
 app.use( indexRouter );
 app.use('/codes', code_execution );
+app.use( '/auth', authorize_user );
+app.use(errorHandler);
 
-const mongoose = require( 'mongoose' );
-const User = mongoose.model('User')
-app.get('/register', (req,res) =>{
+//sample register user
+// const mongoose = require( 'mongoose' );
+// const User = mongoose.model('User')
+// app.get('/register', (req,res) =>{
   
-  const result = User.create({email:'tonystark@gmail.com',password:'tony@123'})
-  // console.log(User.find().pretty());
-  // res.send(User.find().pretty())
-  res.json(result)
-  res.send("ok")
+//   const result = User.create({email:'tonystark@gmail.com',password:'tony@123'})
+//   // console.log(User.find().pretty());
+//   // res.send(User.find().pretty())
+//   res.json(result)
+//   res.send("ok")
 
   
-})
+// })
 // app.get('/', (req, res) => {
 //   res.send('Hello World!')
 // })
