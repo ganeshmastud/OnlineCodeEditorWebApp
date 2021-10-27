@@ -56,19 +56,22 @@ const id = nanoid(5)
 
     // })
 
-let exe_file = path.resolve('../CodeFiles/java/javamMUzK', 'Simple')
+
+let exe_file = path.resolve(__dirname, 'rough.py')
 
 console.log("Exe ",exe_file)
-    exec( `java -Xdiag ${exe_file}` , (error, stdout, stderr) => {
+    exec( `python ${exe_file}` , (error,stdin, stdout, stderr) => {
     if (error) {
         console.log(`error to execute: ${error.message}`);
         return;
     }
+    
     if (stderr) {
         console.log(`stderr: ${stderr}`);
         return;
     }
     console.log(`stdout: ${stdout}`);
+    stdin.write("coolest")
     return;
      
     })
