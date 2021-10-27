@@ -37,6 +37,20 @@ const java_execute = async (req,res,next) =>{
 
         await promise.then( async (req_body) =>{
             const {userId,select_language,codearea } = req_body;
+            if(userId === undefined || userId.length <= 0 || userId === null){
+                const error = new Error("Please provide the right userId")
+                return next (error)
+            }
+            if(select_language === undefined || select_language === null){
+                const error = new Error("Please provide the right language details")
+                return next (error)
+            }
+            if(codearea === undefined || codearea === null || codearea.length <=0){
+                
+                const error = new Error("Please provide some code to run")
+                error.status = 204;
+                return next (error)
+            }
             const filter = {"_id" : userId}
             let code_for_lang_present=false;
             const code_dir = 'CodeFiles/java';

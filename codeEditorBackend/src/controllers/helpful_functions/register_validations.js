@@ -8,6 +8,7 @@ function register_validation(user){
             flag:true
 
         };
+        let errors=[]
         // let flag=true;
         let hasNumber = /\d/ //new RegExp('d'); 
         let uppercase =/[A-Z]+/g //new RegExp('+[A-Z]','g');
