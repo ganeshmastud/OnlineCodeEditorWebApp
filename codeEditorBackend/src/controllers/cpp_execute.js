@@ -11,7 +11,7 @@ const User = mongoose.model('User')
 const nanoid = require('nanoid')
 
 const cpp_execute = async (req,res,next) =>{
-
+  
     try{
         console.log("you are in cpp exec flie in controller");
         if(!req.body){
@@ -43,11 +43,11 @@ const cpp_execute = async (req,res,next) =>{
         console.log("userId ",userId)
         const filter = {"_id" : userId}
         let code_for_lang_present=false;
-        const code_dir = 'CodeFiles/cpp';
+        const code_dir = 'src/CodeFiles/cpp';
 
         let cppfilepath =''
         const if_filepath_exist_in_db = await User.find(filter)
-        console.log("if_filepath_exist_in_db ",if_filepath_exist_in_db)
+        // console.log("if_filepath_exist_in_db ",if_filepath_exist_in_db)
         let cpp_exe_file = ''
         if(if_filepath_exist_in_db[0].codeFiles.length>0){
             if_filepath_exist_in_db[0].codeFiles.forEach(code_file =>{
@@ -73,9 +73,9 @@ const cpp_execute = async (req,res,next) =>{
             const id = nanoid(5)
             const cpp_path = 'cpp'+id+'.cpp'
             cpp_exe_file = path.resolve(code_dir,'cpp'+id)
-            cppfilepath = await path.resolve(code_dir, cpp_path)  //important when trying to access the pat using path.jion error was thrown
+            cppfilepath = path.resolve(code_dir, cpp_path)  //important when trying to access the path using path.join error was thrown
             // console.log("path resolve :",pyfilepath);
-
+            console.log("cppfilepath ",cppfilepath)
             let update = {language:select_language, filepath:cppfilepath};
             // console.log("update ",update)
             let doc = await User.findOneAndUpdate(filter, {$push:{ codeFiles:{$each:[update]} }}, {
@@ -95,16 +95,43 @@ const cpp_execute = async (req,res,next) =>{
             console.log("error is :",error.message);
             })
 
-       let stdout = fileToExe(cpp_exe_file,cppfilepath, runExe(cpp_exe_file+'.exe'))
+    //    let stdout = fileToExe(cpp_exe_file,cppfilepath, runExe(cpp_exe_file+'.exe'))
+            exec(`g++ ${cppfilepath} -o ${cpp_exe_file} ` , (error, stdout, stderr) => {
+                if (error) {
+                    console.log(`error: ${error.message}`);
+                    return;
+                }
+                if (stderr) {
+                    console.log(`stderr: ${stderr}`);
+                    return;
+                }
+            })
+
+            exec(`${cpp_exe_file}`, (error, stdout, stderr) => {
+                if (error) {
+                    console.log(`error: ${error.message}`);
+                    return;
+                }
+                if (stderr) {
+                    console.log(`stderr: ${stderr}`);
+                    return;
+                }
+                // console.log(`stdout: ${stdout}`);
+                
+                // return stdout;
+                res.status(200)
+                res.send(stdout);
+            
+            })
         // let exe_file = path.resolve(code_dir, c_exe_file)
         // console.log("c_exe_file 2:",cpp_exe_file)
         // let stdout = runExe(cpp_exe_file)
         // stdout= runExe(cpp_exe_file+'.exe')
-        res.status(200)
-        res.send(stdout);
+        // res.status(200)
+        // res.send(stdout);
     }
     catch(error){
-        console.log(error.message)
+       next( new Error(error.message))
     }
     
 
@@ -112,36 +139,36 @@ const cpp_execute = async (req,res,next) =>{
     
 }
 
-const fileToExe = (cpp_exe_file,cppfilepath,runExe) => {
-     exec(`g++ ${cppfilepath} -o ${cpp_exe_file} ` , (error, stdout, stderr) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            return;
-        }
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-        }
-    })
-    return runExe;
-}
+// const fileToExe = (cpp_exe_file,cppfilepath,runExe) => {
+//      exec(`g++ ${cppfilepath} -o ${cpp_exe_file} ` , (error, stdout, stderr) => {
+//         if (error) {
+//             console.log(`error: ${error.message}`);
+//             return;
+//         }
+//         if (stderr) {
+//             console.log(`stderr: ${stderr}`);
+//             return;
+//         }
+//     })
+//     return runExe;
+// }
 
-const runExe =  (cpp_exe_file) => {
-        exec(`${cpp_exe_file}`, (error, stdout, stderr) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            return;
-        }
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-        }
-        console.log(`stdout: ${stdout}`);
+// const runExe =  (cpp_exe_file) => {
+//         exec(`${cpp_exe_file}`, (error, stdout, stderr) => {
+//         if (error) {
+//             console.log(`error: ${error.message}`);
+//             return;
+//         }
+//         if (stderr) {
+//             console.log(`stderr: ${stderr}`);
+//             return;
+//         }
+//         // console.log(`stdout: ${stdout}`);
         
-        return stdout;
+//         return stdout;
      
-    })
-}
+//     })
+// }
 
 
 

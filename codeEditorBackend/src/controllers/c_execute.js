@@ -42,7 +42,6 @@ const c_execute = async (req,res,next) =>{
     const filter = {"_id" : userId}
     let code_for_lang_present=false;
     const code_dir = 'CodeFiles/c';
-
     let cfilepath =''
     const if_filepath_exist_in_db = await User.find(filter)
     let c_exe_file = ''
@@ -70,7 +69,7 @@ const c_execute = async (req,res,next) =>{
         const id = nanoid(5)
         const c_path = 'c'+id+'.c'
         c_exe_file = path.resolve(code_dir,'c'+id)
-        cfilepath = await path.resolve(code_dir, c_path)  //important when trying to access the pat using path.jion error was thrown
+        cfilepath =  path.resolve(code_dir, c_path)  //important when trying to access the pat using path.jion error was thrown
         // console.log("path resolve :",pyfilepath);
 
         let update = {language:select_language, filepath:cfilepath};
@@ -92,17 +91,7 @@ const c_execute = async (req,res,next) =>{
         console.log("error is :",error.message);
         })
 
-    fileToExe(c_exe_file,cfilepath)
-    // let exe_file = path.resolve(code_dir, c_exe_file)
-    console.log("c_exe_file 2:",c_exe_file)
-    let stdout = runExe(c_exe_file)
-    res.status(200)
-    res.send(stdout);
-
-        
-    
-}
-const fileToExe = (c_exe_file,cfilepath) => {
+    // fileToExe(c_exe_file,cfilepath)
      exec(`gcc -o ${c_exe_file} ${cfilepath}` , (error, stdout, stderr) => {
         if (error) {
             console.log(`error: ${error.message}`);
@@ -113,10 +102,10 @@ const fileToExe = (c_exe_file,cfilepath) => {
             return;
         }
     })
-}
 
-const runExe =  (c_exe_file) => {
-        exec(`${c_exe_file}`, (error, stdout, stderr) => {
+    // let exe_file = path.resolve(code_dir, c_exe_file)
+    console.log("c_exe_file 2:",c_exe_file)
+    exec(`${c_exe_file}`, (error, stdout, stderr) => {
         if (error) {
             console.log(`error: ${error.message}`);
             return;
@@ -125,12 +114,46 @@ const runExe =  (c_exe_file) => {
             console.log(`stderr: ${stderr}`);
             return;
         }
-        console.log(`stdout: ${stdout}`);
+        // console.log(`stdout: ${stdout}`);
         
-        return stdout;
+        res.status(200)
+        res.send(stdout);
      
     })
+    // let stdout = runExe(c_exe_file)
+    
+    
+        
 }
+// const fileToExe = (c_exe_file,cfilepath) => {
+//      exec(`gcc -o ${c_exe_file} ${cfilepath}` , (error, stdout, stderr) => {
+//         if (error) {
+//             console.log(`error: ${error.message}`);
+//             return;
+//         }
+//         if (stderr) {
+//             console.log(`stderr: ${stderr}`);
+//             return;
+//         }
+//     })
+// }
+
+// function runExe(c_exe_file){
+//         exec(`${c_exe_file}`, (error, stdout, stderr) => {
+//         if (error) {
+//             console.log(`error: ${error.message}`);
+//             return;
+//         }
+//         if (stderr) {
+//             console.log(`stderr: ${stderr}`);
+//             return;
+//         }
+//         // console.log(`stdout: ${stdout}`);
+        
+//         return stdout;
+     
+//     })
+// }
 
 
 

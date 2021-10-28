@@ -6,6 +6,12 @@ const { exec } = require("child_process");
 const py =path.join('../CodeFiles', 'dummy.py')
 console.log("normalize :",path.normalize('./CodeFiles'))
 
+
+//remove codefiles  command
+//db.users.update({_id:ObjectId("6179a145bb9b5e6f3d25164c")},{$pull:{"codeFiles":{language:"cpp"}}})  
+
+
+
 // const c = path.resolve('CodeFiles', 'dummy.py')
 // console.log("path resolve :",c);
 

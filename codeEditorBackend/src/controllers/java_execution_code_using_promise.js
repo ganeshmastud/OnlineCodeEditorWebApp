@@ -4,7 +4,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const { execSync,exec,spawn } = require("child_process");
+const { exec } = require("child_process");
 const fs = require('fs');
 const path = require('path')
 const mongoose = require( 'mongoose' );
@@ -87,51 +87,14 @@ const java_execute = async (req,res,next) =>{
                 // console.log("got here",paths_obj.javafilepath,paths_obj.codearea)
                 // console.log("writeToFileFn ", writeToFileFn.writeToFileFn)
                 await writeToFileFn.writeToFileFn(paths_obj.javafilepath,paths_obj.codearea);
-                // let is_complete = await  continue next line here after removing commit
-                //  fileToExe(paths_obj.javafilepath)
-                 console.log("before file to exe code");
-                spawn(`javac ${javafilepath}` , (error, stdout, stderr) => {
-                    console.log("in file to exe code");
-                    if (error) {
-                        console.log(`error: ${error.message}`);
-                        next(error.message)
-                        return;
-                    }
-                    if (stderr) {
-                        console.log(`stderr: ${stderr}`);
-                        next(error.message)
-                        return;
-                    }
-                })
-                // let stdout='';
+                let is_complete = await fileToExe(paths_obj.javafilepath)
+                let stdout='';
                 // if(is_complete){
-                    //  stdout =  runExe(paths_obj.java_file_dir ,paths_obj.java_exe_file) 
-
+                     stdout = await runExe(paths_obj.java_file_dir ,paths_obj.java_exe_file) 
                 // }
-                 java_exe_file = java_exe_file.split('.')[0]
-        // console.log("java_exe_file ",java_exe_file)
-
-        //run java exe file
-                spawn(`java -cp ${paths_obj.java_file_dir}; ${paths_obj.java_exe_file}`, (error, stdout, stderr) => {
-                    console.log("exe file running");
-                    if (error) {
-                        console.log(`error: ${error.message}`);
-                        next(error.message);
-                        return;
-                    }
-                    if (stderr) {
-                        console.log(`stderr: ${stderr}`);
-                        next(error.message);
-                        return;
-                    }
-                    console.log(`stdout: ${stdout}`);
-                    
-                    res.send(stdout);
                 
-                })
-                
-                // res.status(200)
-                // res.send(stdout);
+                res.status(200)
+                res.send(stdout);
         })
         .catch(err=>{
             next(err.message);
@@ -205,7 +168,6 @@ const java_execute = async (req,res,next) =>{
                     
             } catch (err) {
                 console.error(err);
-                next(err)
             }
             
             // console.log("doc ",doc);
@@ -234,7 +196,6 @@ const java_execute = async (req,res,next) =>{
             classfile = files[1];
         } catch (err) {
             console.error(err);
-            next(err)
         }
         //  fs.readdir(path.resolve(java_file_dir), function(err, files) {
 
@@ -268,12 +229,10 @@ const java_execute = async (req,res,next) =>{
         exec(`javac ${javafilepath}` , (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
-                next(error.message)
                 return;
             }
             if (stderr) {
                 console.log(`stderr: ${stderr}`);
-                next(error.message)
                 return;
             }
         })
