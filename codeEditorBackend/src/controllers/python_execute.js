@@ -19,6 +19,7 @@ const python_execute = async (req,res,next) =>{
         return next( error );
     } 
     const {userId,select_language,codearea }= req.body; 
+    // console.log("req.body ",req.body);
     if(userId === undefined || userId.length <= 0 || userId === null){
         const error = new Error("Please provide the right userId")
         return next (error)

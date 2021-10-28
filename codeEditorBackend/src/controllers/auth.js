@@ -14,7 +14,8 @@ const register = async( req, res, next ) => {
         const error = new Error( 'User details not sent in request body' );
         next( error );
         return;
-}
+    }
+    // console.log("user in reg", user)
     // console.log("register_validation ",typeof register_validation.register_validation)
     const register_errors = register_validation.register_validation(user)
     let errors=[]
@@ -31,9 +32,9 @@ const register = async( req, res, next ) => {
         if(register_errors.password_errs.length >0){
             errors.push(...register_errors.password_errs);
         }
-        if(register_errors.retype_password_err.length > 0){
-            errors.push(register_errors.retype_password_err);
-        }
+        // if(register_errors.retype_password_err.length > 0){
+        //     errors.push(register_errors.retype_password_err);
+        // }
         if(register_errors.email_err.length > 0){
             errors.push(register_errors.email_err);
         }
@@ -110,7 +111,7 @@ const login = async ( req, res, next ) => {
                     error.status = 404;
                     return next( error );
                 }
-
+                // console.log("USere in login auth ",user, user._id)
                 // generate the token
                 const claims = {
                     name: user.name,
@@ -119,7 +120,7 @@ const login = async ( req, res, next ) => {
                 };
 
                 // 'abcd' is the secret key - please store this in process.env.* where * is some environment variable like JWT_SECRET (say)
-                jwt.sign( claims, 'JWT_SECRET_KEY' /* process.env.JWT_SECRET */, { expiresIn: 24 * 60 * 60 }, ( err, token ) => {
+                 jwt.sign( claims, 'JWT_SECRET_KEY' /* process.env.JWT_SECRET */, { expiresIn: 24 * 60 * 60 }, ( err, token ) => {
                     if( err ) {
                         err.status = 500;
                         return next( err );
@@ -127,7 +128,8 @@ const login = async ( req, res, next ) => {
 
                     res.json({
                         email: user.email,
-                        token: token
+                        token: token,
+                        userId:user._id
                     });
                 });
             });

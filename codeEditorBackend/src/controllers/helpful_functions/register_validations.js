@@ -1,9 +1,9 @@
 function register_validation(user){
         // console.log("in reg val ",user);
-        let registratin_error={
+        let registration_error={
             username_err:[],
             password_errs:[],
-            retype_password_err:[],
+            // retype_password_err:[],
             email_err:[],
             flag:true
 
@@ -19,41 +19,42 @@ function register_validation(user){
         //user name validation
         let usernamelen = user.name;
         if(usernamelen.length <=2){
-            registratin_error.username_err="please enter the username atleast 3 characters long";
+            registration_error.username_err="please enter the username atleast 3 characters long";
         }else{
-            registratin_error.username_err="";
+            registration_error.username_err="";
         }
 
         //email validations 
         if(!email_regex.test(user.email)){
-            registratin_error.email_err.push("You have entered an invalid email address!")
+            registration_error.email_err.push("You have entered an invalid email address!")
         }
         if(user.password.length <8){
-            registratin_error.password_errs.push("Password should be 8 character long")
-            registratin_error.flag=false;
+            registration_error.password_errs.push("Password should be 8 character long")
+            registration_error.flag=false;
         }
         if(!hasNumber.test(user.password)){
-            registratin_error.password_errs.push('Password should contains atleast 1 number')
-            registratin_error.flag=false;
+            registration_error.password_errs.push('Password should contains atleast 1 number')
+            registration_error.flag=false;
         }
         if(!uppercase.test(user.password)){
-            registratin_error.password_errs.push('Password should contains atleast 1 uppercase letter')
-            registratin_error.flag=false;
+            registration_error.password_errs.push('Password should contains atleast 1 uppercase letter')
+            registration_error.flag=false;
         }
         if(!lowecase.test(user.password)){
-            registratin_error.password_errs.push('Password should contains atleast 1 lowercase letter')
-            registratin_error.flag=false;
+            registration_error.password_errs.push('Password should contains atleast 1 lowercase letter')
+            registration_error.flag=false;
         }
         if(!specialSymbol.test(user.password)){
-            registratin_error.password_errs.push('Password should contains atleast 1 Special letter')
-            registratin_error.flag=false;
+            registration_error.password_errs.push('Password should contains atleast 1 Special letter')
+            registration_error.flag=false;
         }
-        if(user.password !== user.retype_password){
-            registratin_error.retype_password_err ="Password doesn't match, please enter the same password again"
-            registratin_error.flag=false;
-        }   
+        // if(user.password !== user.retype_password){
+        //     console.log("user.password user.retype_password",user.password, user.retype_password)
+        //     registration_error.retype_password_err ="Password doesn't match, please enter the same password again"
+        //     registration_error.flag=false;
+        // }   
      
-    return registratin_error;
+    return registration_error;
 }
 
 module.exports = {
