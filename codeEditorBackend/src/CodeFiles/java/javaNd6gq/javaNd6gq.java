@@ -1,6 +1,13 @@
-class Simple{  
-    public static void main(String args[]){  
-     System.out.println("Hello Java boy cool \n");  
-     System.out.println("monday tuesday friday fullday"); 
-    }  
-}  
+class Simple {
+
+  public static void main(String[] args) {
+    int rows = 5;
+
+    for (int i = 1; i <= rows; ++i) {
+      for (int j = 1; j <= i; ++j) {
+        System.out.print("* ");
+      }
+      System.out.println();
+    }
+  }
+}

@@ -98,9 +98,11 @@ const c_execute = async (req,res,next) =>{
    const compiler =  spawn(`gcc`, [cfilepath,'-o', c_exe_file])
         compiler.stdout.on('data', (data) => {
         console.log(`stdout: ${data}`);
+        return next(data)
         });
         compiler.stderr.on('data', (data) => {
         console.log(`compile-stderr: ${String(data)}`);
+        return next(data)
         // callback('1', String(data)); // 1, compile error
         });
         compiler.on('close', (data) => {
@@ -112,7 +114,7 @@ const c_execute = async (req,res,next) =>{
 
     // let exe_file = path.resolve(code_dir, c_exe_file)
     console.log("c_exe_file 2:",c_exe_file)
-    async function execute() {
+    async function execute(c_exe_file) {
         const { stdout, stderr } = await exec_async(c_exe_file);
             console.log('stdout:', stdout);
             if(stdout){

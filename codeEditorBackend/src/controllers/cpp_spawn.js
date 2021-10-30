@@ -95,21 +95,22 @@ const cpp_execute = async (req,res,next) =>{
             
             writecode.on('error', error =>{
             console.log("error is :",error.message);
-           return next(error.message);
+                return next(error.message);
             })
+
              const compiler =  spawn(`g++`, [cppfilepath,'-o', cpp_exe_file])
                 compiler.stdout.on('data', (data) => {
-                console.log(`stdout: ${data}`);
+                    console.log(`stdout: ${data}`);
                 });
                 compiler.stderr.on('data', (data) => {
-                console.log(`compile-stderr: ${String(data)}`);
-                // callback('1', String(data)); // 1, compile error
+                    console.log(`compile-stderr: ${String(data)}`);
+                    // callback('1', String(data)); // 1, compile error
                 });
                 compiler.on('close', (data) => {
-                if (data === 0) {
-                    execute(cpp_exe_file);
-                }
-            });
+                    if (data === 0) {
+                        execute(cpp_exe_file);
+                    }
+                });
             async function execute(cpp_exe_file) {
             const { stdout, stderr } = await exec_async(cpp_exe_file);
                 
