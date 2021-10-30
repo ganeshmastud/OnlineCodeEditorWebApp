@@ -3,13 +3,14 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const { exec } = require("child_process");
+const { spawn } = require("child_process");
 const fs = require('fs');
 const path = require('path')
 const mongoose = require( 'mongoose' );
 const User = mongoose.model('User')
 const nanoid = require('nanoid')
-
+const util = require('util');
+const exec_async = util.promisify(require('child_process').exec);
 const c_execute = async (req,res,next) =>{
 
     console.log("you are in c exec flie in controller");
@@ -94,40 +95,54 @@ const c_execute = async (req,res,next) =>{
         })
         writecode.close();
     // fileToExe(c_exe_file,cfilepath)
-     exec(`gcc -o ${c_exe_file} ${cfilepath}` , (error, stdout, stderr) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            next(error.message)
-            return;
+   const compiler =  spawn(`gcc`, [cfilepath,'-o', c_exe_file])
+        compiler.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`);
+        });
+        compiler.stderr.on('data', (data) => {
+        console.log(`compile-stderr: ${String(data)}`);
+        // callback('1', String(data)); // 1, compile error
+        });
+        compiler.on('close', (data) => {
+        if (data === 0) {
+            execute(c_exe_file);
         }
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            next(stderr)
-            return;
-        }
-    })
+        });
+    
 
     // let exe_file = path.resolve(code_dir, c_exe_file)
     console.log("c_exe_file 2:",c_exe_file)
-    exec(`${c_exe_file}`, (error, stdout, stderr) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            next(error.message);
-            return;
+    async function execute() {
+        const { stdout, stderr } = await exec_async(c_exe_file);
+            console.log('stdout:', stdout);
+            if(stdout){
+                res.status(200)
+                res.send(stdout)
+            }
+            if(stderr){
+                res.status(200)
+                res.send(stderr)
+            }
+            console.error('stderr:', stderr);
         }
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            next(stderr);
-            return;
-        }
-        // console.log(`stdout: ${stdout}`);
-        if(stdout){
-            res.status(200)
-            res.send(stdout);
-        }
-       
-     
-    })
+    // function execute(c_exe_file){
+    //     const executor = spawn(c_exe_file, [],[]);
+    //     executor.stdout.on('data', (output) => {
+    //         console.log('stdout ',String(output));
+    //         // callback('0', String(output)); // 0, no error
+    //     });
+    //     executor.stderr.on('data', (output) => {
+    //         console.log(`stderr: ${String(output)}`);
+    //         // callback('2', String(output)); // 2, execution failure
+    //     });
+    //     executor.on('close', (output) => {
+    //         console.log(`stdout: ${output}`);
+    //         res.sendStatus(200)
+    //         res.send(output);
+    //     });
+    // }
+    
+    
     // let stdout = runExe(c_exe_file)
     
     

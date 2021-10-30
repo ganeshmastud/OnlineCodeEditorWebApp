@@ -1,3 +1,5 @@
+const path = require('path')
+require('dotenv').config({path: path.resolve(__dirname,'.env')})
 require( './data/init' );
 const express = require('express')
 const app = express()
@@ -6,7 +8,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const { exec } = require("child_process");
 const fs = require('fs');
-const path = require('path')
+
 
 const code_execution = require( './routes/code_executions' );
 const indexRouter = require( './routes/index' );

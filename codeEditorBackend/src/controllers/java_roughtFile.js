@@ -175,11 +175,11 @@ const java_execute = async (req,res,next) =>{
         exec(`javac ${javafilepath}` , (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
-                return;
+                return next(error.message);
             }
             if (stderr) {
                 console.log(`stderr: ${stderr}`);
-                return;
+                return next(stderr);
             }
         })
     }
@@ -194,11 +194,11 @@ function runExe(java_file_dir, java_exe_file){
         exec(`java -cp ${java_file_dir}; ${java_exe_file}`, (error, stdout, stderr) => {
         if (error) {
             console.log(`error: ${error.message}`);
-            return;
+            return next(error.message);
         }
         if (stderr) {
             console.log(`stderr: ${stderr}`);
-            return;
+            return next(stderr);
         }
         console.log(`stdout: ${stdout}`);
         

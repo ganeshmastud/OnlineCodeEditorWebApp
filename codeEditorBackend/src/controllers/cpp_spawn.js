@@ -3,12 +3,14 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const { exec } = require("child_process");
+const { exec,spawn } = require("child_process");
 const fs = require('fs');
 const path = require('path')
 const mongoose = require( 'mongoose' );
 const User = mongoose.model('User')
 const nanoid = require('nanoid')
+const util = require('util');
+const exec_async = util.promisify(require('child_process').exec);
 
 const cpp_execute = async (req,res,next) =>{
   
@@ -95,35 +97,63 @@ const cpp_execute = async (req,res,next) =>{
             console.log("error is :",error.message);
            return next(error.message);
             })
-
-    //    let stdout = fileToExe(cpp_exe_file,cppfilepath, runExe(cpp_exe_file+'.exe'))
-            exec(`g++ ${cppfilepath} -o ${cpp_exe_file} ` , (error, stdout, stderr) => {
-                if (error) {
-                    console.log(`error: ${error.message}`);
-                    return;
+             const compiler =  spawn(`g++`, [cppfilepath,'-o', cpp_exe_file])
+                compiler.stdout.on('data', (data) => {
+                console.log(`stdout: ${data}`);
+                });
+                compiler.stderr.on('data', (data) => {
+                console.log(`compile-stderr: ${String(data)}`);
+                // callback('1', String(data)); // 1, compile error
+                });
+                compiler.on('close', (data) => {
+                if (data === 0) {
+                    execute(cpp_exe_file);
                 }
-                if (stderr) {
-                    console.log(`stderr: ${stderr}`);
-                    return;
-                }
-            })
-
-            exec(`${cpp_exe_file}`, (error, stdout, stderr) => {
-                if (error) {
-                    console.log(`error: ${error.message}`);
-                    return;
-                }
-                if (stderr) {
-                    console.log(`stderr: ${stderr}`);
-                    return;
-                }
-                // console.log(`stdout: ${stdout}`);
+            });
+            async function execute(cpp_exe_file) {
+            const { stdout, stderr } = await exec_async(cpp_exe_file);
                 
-                // return stdout;
-                res.status(200)
-                res.send(stdout);
+                if(stdout){
+                    console.log('stdout:', stdout);
+                    res.status(200)
+                    res.send(stdout)
+                }
+                if(stderr){
+                     console.error('stderr:', stderr);
+                    res.status(200)
+                    res.send(stderr)
+                }
+               
+            }
+    //    let stdout = fileToExe(cpp_exe_file,cppfilepath, runExe(cpp_exe_file+'.exe'))
+            // exec(`g++ ${cppfilepath} -o ${cpp_exe_file} ` ,
+            //  const {(error, stdout, stderr} = 
+            //     if (error) {
+            //         console.log(`error: ${error.message}`);
+            //         return;
+            //     }
+            //     if (stderr) {
+            //         console.log(`stderr: ${stderr}`);
+            //         return;
+            //     }
+            // })
+
+            // exec(`${cpp_exe_file}`, (error, stdout, stderr) => {
+            //     if (error) {
+            //         console.log(`error: ${error.message}`);
+            //         return;
+            //     }
+            //     if (stderr) {
+            //         console.log(`stderr: ${stderr}`);
+            //         return;
+            //     }
+            //     // console.log(`stdout: ${stdout}`);
+                
+            //     // return stdout;
+            //     res.status(200)
+            //     res.send(stdout);
             
-            })
+            // })
         // let exe_file = path.resolve(code_dir, c_exe_file)
         // console.log("c_exe_file 2:",cpp_exe_file)
         // let stdout = runExe(cpp_exe_file)

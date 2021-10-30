@@ -4,7 +4,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const { execSync,exec,spawn } = require("child_process");
+const { execSync,exec } = require("child_process");
 const fs = require('fs');
 const path = require('path')
 const mongoose = require( 'mongoose' );
@@ -13,6 +13,10 @@ const nanoid = require('nanoid')
 
 const  fspromises = require('fs/promises');
 const { nextTick } = require('process');
+
+const util = require('util');
+const exec_java_file = util.promisify(require('child_process').exec);
+
 // const makedir = reaquir('fs/promises/mkdir')
 
 // console.log("readdir ", fspromises.readdir)
@@ -54,7 +58,7 @@ const java_execute = async (req,res,next) =>{
             }
             const filter = {"_id" : userId}
             let code_for_lang_present=false;
-            const code_dir = 'src/CodeFiles/java';
+            const code_dir = 'CodeFiles/java';
 
             let javafilepath = '';
             let java_exe_file = '';
@@ -90,7 +94,7 @@ const java_execute = async (req,res,next) =>{
                 // let is_complete = await  continue next line here after removing commit
                 //  fileToExe(paths_obj.javafilepath)
                  console.log("before file to exe code");
-                spawn(`javac ${javafilepath}` , (error, stdout, stderr) => {
+                exec(`javac ${paths_obj.javafilepath}` , (error, stdout, stderr) => {
                     console.log("in file to exe code");
                     if (error) {
                         console.log(`error: ${error.message}`);
@@ -112,23 +116,32 @@ const java_execute = async (req,res,next) =>{
         // console.log("java_exe_file ",java_exe_file)
 
         //run java exe file
-                spawn(`java -cp ${paths_obj.java_file_dir}; ${paths_obj.java_exe_file}`, (error, stdout, stderr) => {
-                    console.log("exe file running");
-                    if (error) {
-                        console.log(`error: ${error.message}`);
-                        next(error.message);
-                        return;
-                    }
-                    if (stderr) {
-                        console.log(`stderr: ${stderr}`);
-                        next(error.message);
-                        return;
-                    }
-                    console.log(`stdout: ${stdout}`);
+            async function lsExample() {
+            const { stdout, stderr,error } = await exec_java_file(`java -cp ${paths_obj.java_file_dir}; ${java_exe_file}`);
+            console.log('stdout:', stdout);
+            console.error('stderr:', stderr);
+            console.error('error:', error);
+            res.send(stdout);
+            }
+            lsExample();
+                console.log("before file runing.")
+                // exec(`java -cp ${paths_obj.java_file_dir}; ${java_exe_file}`, (error, stdout, stderr) => {
+                //     console.log("exe file running");
+                //     if (error) {
+                //         console.log(`error: ${error.message}`);
+                //         next(error.message);
+                //         return;
+                //     }
+                //     if (stderr) {
+                //         console.log(`stderr: ${stderr}`);
+                //         next(error.message);
+                //         return;
+                //     }
+                //     console.log(`stdout: ${stdout}`);
                     
-                    res.send(stdout);
+                //     res.send(stdout);
                 
-                })
+                // })
                 
                 // res.status(200)
                 // res.send(stdout);

@@ -3,8 +3,8 @@ const bodyParser = require('body-parser')
 var jsonParser = bodyParser.json();
 const {python_execute} = require( '../controllers/python_execute' );
 const {java_execute} = require( '../controllers/java_execute' );
-const {c_execute} = require( '../controllers/c_execute' );
-const {cpp_execute} = require( '../controllers/cpp_execute' );
+const {c_execute} = require( '../controllers/c_spawn' );
+const {cpp_execute} = require( '../controllers/cpp_spawn' );
 
 const {authenticate} = require('../middleware/auth')
 const {request_data_code_size} =require('../middleware/req_datasize')
