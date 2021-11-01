@@ -15,7 +15,7 @@ const indexRouter = require( './routes/index' );
 const authorizeUser = require( './routes/auth' );
 
 // const {authenticate} = require('./middleware/auth')  //if this middleware is added in main or index js it
-                                                        //will throw error
+                                                        //will throw error 
 // app.use(authenticate)
 const errorHandler = require('./middleware/error');
 

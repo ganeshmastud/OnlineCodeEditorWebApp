@@ -81,11 +81,14 @@ const python_execute = async (req,res,next) =>{
     await exec(`python ${pyfilepath}` , (error, stdout, stderr) => {
     if (error) {
         console.log(`error: ${error.message}`);
-
-        return next(error.message);
+        // const replace_str = new RegExp(pyfilepath,'g')
+        // const updatedError = error.message.replace(replace_str, '')
+        const updatedError = error.message.split(pyfilepath).join('');
+        return next(updatedError);
     }
     if (stderr) {
         console.log(`stderr: ${stderr}`);
+        
         return next(stderr);
     }
     console.log(`stdout: ${stdout}`);

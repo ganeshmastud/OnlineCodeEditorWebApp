@@ -94,10 +94,8 @@ const c_execute = async (req,res,next) =>{
         });
         compiler.stderr.on('data', (data) => {
         console.log(`compile-stderr: ${String(data)}`);
-        // return next(data)
-        const error = new Error(String(data).split('.')[1]);
-        return next(error);
-        // callback('1', String(data)); // 1, compile error
+        const updatedError = String(data).split(cfilepath).join('');
+        return next(updatedError);
         });
         compiler.on('close', (data) => {
         if (data === 0) {
@@ -116,7 +114,7 @@ const c_execute = async (req,res,next) =>{
                 res.send(stdout)
             }
             if(stderr){
-                console.error('stderr:', stderr);
+                console.error('exe stderr:', stderr);
                 next(stderr)
             }
             // console.error('stderr:', stderr);

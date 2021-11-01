@@ -95,6 +95,8 @@ const java_execute = async (req,res,next) =>{
                         });
                         compiler.stderr.on('data', (data) => {
                             console.log(`compile-stderr: ${String(data)}`);
+                            const updatedError = String(data).split(pathsObj.javaFilePath).join('');
+                            return next('Line '+updatedError);
                             // callback('1', String(data)); // 1, compile error
                         });
                         compiler.on('close', (data) => {
@@ -124,7 +126,9 @@ const java_execute = async (req,res,next) =>{
                     console.log("in runExe",stdout, stderr)
                     if(stderr){
                         console.error('stderr:', stderr);
-                        return next(stderr);
+                         const updatedError = stderr.split(javaExeFile).join('');
+                        return next(updatedError);
+                        // return next(stderr);
                     }
                         if(stdout){
                         console.log('stdout:', stdout);

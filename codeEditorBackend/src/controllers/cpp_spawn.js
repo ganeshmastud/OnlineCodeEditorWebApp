@@ -96,6 +96,8 @@ const cpp_execute = async (req,res,next) =>{
                 });
                 compiler.stderr.on('data', (data) => {
                     console.log(`compile-stderr: ${String(data)}`);
+                     const updatedError = String(data).split(cppfilepath).join('');
+                     return next(updatedError);
                     // callback('1', String(data)); // 1, compile error
                 });
                 compiler.on('close', (data) => {
