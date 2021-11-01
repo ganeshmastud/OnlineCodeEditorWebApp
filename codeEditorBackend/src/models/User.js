@@ -1,6 +1,6 @@
 const mongoose = require( 'mongoose' );
 const bcrypt = require( 'bcrypt' );
-const codefileSchema = require('./codefiles');
+const codefileSchema = require('./code_files');
 
 const userSchema = new mongoose.Schema({
     name:{
@@ -37,7 +37,7 @@ userSchema.pre( 'save', function( done ) {
         if( err ) {
             return done( err );
         }
-
+        
         bcrypt.hash( user.password, salt, ( err, hashedPassword ) => {
             if( err ) {
                 return done( err );

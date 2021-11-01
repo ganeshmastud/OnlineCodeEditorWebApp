@@ -1,7 +1,7 @@
 const mongoose = require( 'mongoose' );
 const User = mongoose.model( 'User' );
 
-const register_validation = require('./helpful_functions/register_validations');
+const register_validation = require('./common_utils/register_validations');
 const jwt = require( 'jsonwebtoken' );
 
 
@@ -44,6 +44,7 @@ const register = async( req, res, next ) => {
         res.send(errors);
 
     }else{
+        
         
         await User
         .create( user )

@@ -10,13 +10,15 @@ const { exec } = require("child_process");
 const fs = require('fs');
 
 
-const code_execution = require( './routes/code_executions' );
+const codeExecution = require( './routes/code_executions' );
 const indexRouter = require( './routes/index' );
-const authorize_user = require( './routes/auth' );
+const authorizeUser = require( './routes/auth' );
 
-
-
+// const {authenticate} = require('./middleware/auth')  //if this middleware is added in main or index js it
+                                                        //will throw error
+// app.use(authenticate)
 const errorHandler = require('./middleware/error');
+
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors({
         origin:"*"
@@ -32,8 +34,8 @@ var jsonParser = bodyParser.json();
 
 // api routers
 app.use( indexRouter );
-app.use('/codes', code_execution );
-app.use( '/auth', authorize_user );
+app.use('/codes', codeExecution );
+app.use( '/auth', authorizeUser );
 app.use(errorHandler);
 
 //sample register user

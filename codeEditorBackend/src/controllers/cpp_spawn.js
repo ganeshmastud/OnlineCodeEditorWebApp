@@ -23,20 +23,12 @@ const cpp_execute = async (req,res,next) =>{
         } 
         const {userId,select_language,codearea }= req.body; 
         
-        if(userId === undefined || userId.length <= 0 || userId === null){
-        const error = new Error("Please provide the right userId")
-        return next (error)
-    }
-    if(select_language === undefined || select_language === null){
-        const error = new Error("Please provide the right language details")
-        return next (error)
-    }
-    if(codearea === undefined || codearea === null || codearea.length <=0){
-        
-        const error = new Error("Please provide some code to run")
-        error.status = 204;
-        return next (error)
-    }
+        const selectLanguage = select_language;
+        const codeArea =codearea;
+        const codeInputValidationErr= await codeInputValidation.codeInputValidation(userId,selectLanguage,codeArea)
+        if(codeInputValidationErr){
+            next(codeInputValidationErr)
+        }
         
         
             // console.log("path :",__dirname)

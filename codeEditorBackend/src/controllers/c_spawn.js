@@ -20,19 +20,11 @@ const c_execute = async (req,res,next) =>{
         return next( error );
     } 
     const {userId,select_language,codearea }= req.body; 
-    if(userId === undefined || userId.length <= 0 || userId === null){
-        const error = new Error("Please provide the right userId")
-        return next (error)
-    }
-    if(select_language === undefined || select_language === null){
-        const error = new Error("Please provide the right language details")
-        return next (error)
-    }
-    if(codearea === undefined || codearea === null || codearea.length <=0){
-        
-        const error = new Error("Please provide some code to run")
-        error.status = 204;
-        return next (error)
+    const selectLanguage = select_language;
+    const codeArea =codearea;
+    const codeInputValidationErr= await codeInputValidation.codeInputValidation(userId,selectLanguage,codeArea)
+    if(codeInputValidationErr){
+        next(codeInputValidationErr)
     }
     
     
@@ -98,11 +90,13 @@ const c_execute = async (req,res,next) =>{
    const compiler =  spawn(`gcc`, [cfilepath,'-o', c_exe_file])
         compiler.stdout.on('data', (data) => {
         console.log(`stdout: ${data}`);
-        return next(data)
+        res.send(data)
         });
         compiler.stderr.on('data', (data) => {
         console.log(`compile-stderr: ${String(data)}`);
-        return next(data)
+        // return next(data)
+        const error = new Error(String(data).split('.')[1]);
+        return next(error);
         // callback('1', String(data)); // 1, compile error
         });
         compiler.on('close', (data) => {
@@ -122,10 +116,10 @@ const c_execute = async (req,res,next) =>{
                 res.send(stdout)
             }
             if(stderr){
-                res.status(200)
-                res.send(stderr)
+                console.error('stderr:', stderr);
+                next(stderr)
             }
-            console.error('stderr:', stderr);
+            // console.error('stderr:', stderr);
         }
     // function execute(c_exe_file){
     //     const executor = spawn(c_exe_file, [],[]);
