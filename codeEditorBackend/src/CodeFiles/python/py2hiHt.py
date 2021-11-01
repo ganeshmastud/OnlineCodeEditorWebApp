@@ -1,1 +1,1 @@
-print("py co")
+print("cool")

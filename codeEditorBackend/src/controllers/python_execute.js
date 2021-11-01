@@ -31,44 +31,44 @@ const python_execute = async (req,res,next) =>{
     
         // console.log("path :",__dirname)
     
-    // const pyfilepath=path.join(code_dir, 'dummy.py')
+    // const pyFilePath=path.join(codeDir, 'dummy.py')
     const filter = {"_id" : userId}
-    let code_for_lang_present=false;
-    const code_dir = 'CodeFiles/python';
+    let codeForLangPresent=false;
+    const codeDir = 'CodeFiles/python';
 
-    let pyfilepath =''
-    const if_filepath_exist_in_db = await User.find(filter)
+    let pyFilePath =''
+    const ifFilepathExistInDb = await User.find(filter)
     
-    if_filepath_exist_in_db[0].codeFiles.forEach(code_file =>{
-        if(code_file.language === select_language){
-            code_for_lang_present=true;
-            pyfilepath = code_file.filepath;
+    ifFilepathExistInDb[0].codeFiles.forEach(codeFile =>{
+        if(codeFile.language === selectLanguage){
+            codeForLangPresent=true;
+            pyFilePath = codeFile.filepath;
             console.log("file path exist")
             return;
         }
     } )
-    // console.log("if_filepath_exist_in_db ",if_filepath_exist_in_db[0].codeFiles);
+    // console.log("ifFilepathExistInDb ",ifFilepathExistInDb[0].codeFiles);
 
-    if(!code_for_lang_present){
+    if(!codeForLangPresent){
 
 
         
         const id = nanoid(5)
-        const python_path = 'py'+id+'.py'
-        pyfilepath = path.resolve(code_dir, python_path)  //important when trying to access the pat using path.jion error was thrown
-        // console.log("path resolve :",pyfilepath);
+        const pythonPath = 'py'+id+'.py'
+        pyFilePath = path.resolve(codeDir, pythonPath)  //important when trying to access the pat using path.jion error was thrown
+        // console.log("path resolve :",pyFilePath);
 
-        const update = {language:select_language, filepath:pyfilepath};
+        const update = {language:selectLanguage, filepath:pyFilePath};
         let doc = await User.findOneAndUpdate(filter, {$push:{ codeFiles:update }}, {
             returnOriginal: false
         })
         // console.log("doc ",doc);
     }
     
-    let writecode = await fs.createWriteStream( pyfilepath) //,{flags:'a'} flag is set if tryies to append file
+    let writecode = await fs.createWriteStream( pyFilePath) //,{flags:'a'} flag is set if tryies to append file
         // console.log("write code :", writecode )
         
-        writecode.write(req.body.codearea)
+        writecode.write(codeArea)
         
         // console.log(req.body)
         
@@ -78,12 +78,12 @@ const python_execute = async (req,res,next) =>{
         return next(error.message)
         })
 
-    await exec(`python ${pyfilepath}` , (error, stdout, stderr) => {
+    await exec(`python ${pyFilePath}` , (error, stdout, stderr) => {
     if (error) {
         console.log(`error: ${error.message}`);
-        // const replace_str = new RegExp(pyfilepath,'g')
+        // const replace_str = new RegExp(pyFilePath,'g')
         // const updatedError = error.message.replace(replace_str, '')
-        const updatedError = error.message.split(pyfilepath).join('');
+        const updatedError = error.message.split(pyFilePath).join('');
         return next(updatedError);
     }
     if (stderr) {

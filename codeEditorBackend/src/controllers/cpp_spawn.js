@@ -36,41 +36,41 @@ const cpp_execute = async (req,res,next) =>{
         // const pyfilepath=path.join(code_dir, 'dummy.py')
         // console.log("userId ",userId)
         const filter = {"_id" : userId}
-        let code_for_lang_present=false;
+        let codeForLangPresent=false;
         const code_dir = 'CodeFiles/cpp';
 
-        let cppfilepath =''
-        const if_filepath_exist_in_db = await User.find(filter)
-        // console.log("if_filepath_exist_in_db ",if_filepath_exist_in_db)
-        let cpp_exe_file = ''
-        if(if_filepath_exist_in_db[0].codeFiles.length>0){
-            if_filepath_exist_in_db[0].codeFiles.forEach(code_file =>{
-                // console.log("code_file ", code_file)
-                if(code_file.language === select_language){
-                    code_for_lang_present=true;
-                    cppfilepath = code_file.filepath;
-                    cpp_exe_file =code_file.filepath;
+        let cppFilePath =''
+        const ifFilepathExistInDb = await User.find(filter)
+        // console.log("ifFilepathExistInDb ",ifFilepathExistInDb)
+        let cppExeFile = ''
+        if(ifFilepathExistInDb[0].codeFiles.length>0){
+            ifFilepathExistInDb[0].codeFiles.forEach(codeFile =>{
+                // console.log("codeFile ", codeFile)
+                if(codeFile.language === selectLanguage){
+                    codeForLangPresent=true;
+                    cppFilePath = codeFile.filepath;
+                    cppExeFile =codeFile.filepath;
                     // console.log("c_exe_file ",c_exe_file);
-                    cpp_exe_file =cpp_exe_file.slice(0,-4)
+                    cppExeFile =cppExeFile.slice(0,-4)
                     // console.log("file path exist")
                     return;
                 }
             } )
         }
         
-        // console.log("if_filepath_exist_in_db ",if_filepath_exist_in_db[0].codeFiles);
+        // console.log("ifFilepathExistInDb ",ifFilepathExistInDb[0].codeFiles);
 
-        if(!code_for_lang_present){
+        if(!codeForLangPresent){
 
 
             
             const id = nanoid(5)
-            const cpp_path = 'cpp'+id+'.cpp'
-            cpp_exe_file = path.resolve(code_dir,'cpp'+id)
-            cppfilepath = path.resolve(code_dir, cpp_path)  //important when trying to access the path using path.join error was thrown
+            const cppPath = 'cpp'+id+'.cpp'
+            cppExeFile = path.resolve(code_dir,'cpp'+id)
+            cppFilePath = path.resolve(code_dir, cppPath)  //important when trying to access the path using path.join error was thrown
             // console.log("path resolve :",pyfilepath);
-            console.log("cppfilepath ",cppfilepath)
-            let update = {language:select_language, filepath:cppfilepath};
+            console.log("cppFilePath ",cppFilePath)
+            let update = {language:selectLanguage, filepath:cppFilePath};
             // console.log("update ",update)
             let doc = await User.findOneAndUpdate(filter, {$push:{ codeFiles:{$each:[update]} }}, {
                 returnOriginal: false
@@ -78,10 +78,10 @@ const cpp_execute = async (req,res,next) =>{
             // console.log("doc ",doc);
         }
         
-        let writecode =  fs.createWriteStream( cppfilepath) //,{flags:'a'} flag is set if tryies to append file
+        let writecode =  fs.createWriteStream( cppFilePath) //,{flags:'a'} flag is set if tryies to append file
             // console.log("write code :", writecode )
             
-            writecode.write(req.body.codearea)
+            writecode.write(codeArea)
             
             // console.log(req.body)
             
@@ -90,23 +90,23 @@ const cpp_execute = async (req,res,next) =>{
                 return next(error.message);
             })
 
-             const compiler =  spawn(`g++`, [cppfilepath,'-o', cpp_exe_file])
+             const compiler =  spawn(`g++`, [cppFilePath,'-o', cppExeFile])
                 compiler.stdout.on('data', (data) => {
                     console.log(`stdout: ${data}`);
                 });
                 compiler.stderr.on('data', (data) => {
                     console.log(`compile-stderr: ${String(data)}`);
-                     const updatedError = String(data).split(cppfilepath).join('');
+                     const updatedError = String(data).split(cppFilePath).join('');
                      return next(updatedError);
                     // callback('1', String(data)); // 1, compile error
                 });
                 compiler.on('close', (data) => {
                     if (data === 0) {
-                        execute(cpp_exe_file);
+                        execute(cppExeFile);
                     }
                 });
-            async function execute(cpp_exe_file) {
-            const { stdout, stderr } = await exec_async(cpp_exe_file);
+            async function execute(cppExeFile) {
+            const { stdout, stderr } = await exec_async(cppExeFile);
                 
                 if(stdout){
                     console.log('stdout:', stdout);
@@ -120,8 +120,8 @@ const cpp_execute = async (req,res,next) =>{
                 }
                
             }
-    //    let stdout = fileToExe(cpp_exe_file,cppfilepath, runExe(cpp_exe_file+'.exe'))
-            // exec(`g++ ${cppfilepath} -o ${cpp_exe_file} ` ,
+    //    let stdout = fileToExe(cppExeFile,cppFilePath, runExe(cppExeFile+'.exe'))
+            // exec(`g++ ${cppFilePath} -o ${cppExeFile} ` ,
             //  const {(error, stdout, stderr} = 
             //     if (error) {
             //         console.log(`error: ${error.message}`);
@@ -133,7 +133,7 @@ const cpp_execute = async (req,res,next) =>{
             //     }
             // })
 
-            // exec(`${cpp_exe_file}`, (error, stdout, stderr) => {
+            // exec(`${cppExeFile}`, (error, stdout, stderr) => {
             //     if (error) {
             //         console.log(`error: ${error.message}`);
             //         return;
@@ -150,9 +150,9 @@ const cpp_execute = async (req,res,next) =>{
             
             // })
         // let exe_file = path.resolve(code_dir, c_exe_file)
-        // console.log("c_exe_file 2:",cpp_exe_file)
-        // let stdout = runExe(cpp_exe_file)
-        // stdout= runExe(cpp_exe_file+'.exe')
+        // console.log("c_exe_file 2:",cppExeFile)
+        // let stdout = runExe(cppExeFile)
+        // stdout= runExe(cppExeFile+'.exe')
         // res.status(200)
         // res.send(stdout);
     }
@@ -165,8 +165,8 @@ const cpp_execute = async (req,res,next) =>{
     
 }
 
-// const fileToExe = (cpp_exe_file,cppfilepath,runExe) => {
-//      exec(`g++ ${cppfilepath} -o ${cpp_exe_file} ` , (error, stdout, stderr) => {
+// const fileToExe = (cppExeFile,cppFilePath,runExe) => {
+//      exec(`g++ ${cppFilePath} -o ${cppExeFile} ` , (error, stdout, stderr) => {
 //         if (error) {
 //             console.log(`error: ${error.message}`);
 //             return;
@@ -179,8 +179,8 @@ const cpp_execute = async (req,res,next) =>{
 //     return runExe;
 // }
 
-// const runExe =  (cpp_exe_file) => {
-//         exec(`${cpp_exe_file}`, (error, stdout, stderr) => {
+// const runExe =  (cppExeFile) => {
+//         exec(`${cppExeFile}`, (error, stdout, stderr) => {
 //         if (error) {
 //             console.log(`error: ${error.message}`);
 //             return;

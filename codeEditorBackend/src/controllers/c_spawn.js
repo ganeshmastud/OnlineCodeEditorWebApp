@@ -31,41 +31,41 @@ const c_execute = async (req,res,next) =>{
     
         // console.log("path :",__dirname)
     
-    // const pyfilepath=path.join(code_dir, 'dummy.py')
+    // const pyfilepath=path.join(codeDir, 'dummy.py')
     const filter = {"_id" : userId}
-    let code_for_lang_present=false;
-    const code_dir = 'CodeFiles/c';
-    let cfilepath =''
-    const if_filepath_exist_in_db = await User.find(filter)
-    let c_exe_file = ''
-    if(if_filepath_exist_in_db[0].codeFiles.length>0){
-        if_filepath_exist_in_db[0].codeFiles.forEach(code_file =>{
-            // console.log("code_file ", code_file)
-            if(code_file.language === select_language){
-                code_for_lang_present=true;
-                cfilepath = code_file.filepath;
-                c_exe_file =code_file.filepath;
-                console.log("c_exe_file ",c_exe_file);
-                c_exe_file =c_exe_file.slice(0,-2)
+    let codeForLangPresent=false;
+    const codeDir = 'CodeFiles/c';
+    let cFilePath =''
+    const ifFilepathExistInDb = await User.find(filter)
+    let cExeFile = ''
+    if(ifFilepathExistInDb[0].codeFiles.length>0){
+        ifFilepathExistInDb[0].codeFiles.forEach(codeFile =>{
+            // console.log("codeFile ", codeFile)
+            if(codeFile.language === selectLanguage){
+                codeForLangPresent=true;
+                cFilePath = codeFile.filepath;
+                cExeFile =codeFile.filepath;
+                console.log("cExeFile ",cExeFile);
+                cExeFile =cExeFile.slice(0,-2)
                 console.log("file path exist")
                 return;
             }
         } )
     }
     
-    // console.log("if_filepath_exist_in_db ",if_filepath_exist_in_db[0].codeFiles);
+    // console.log("ifFilepathExistInDb ",ifFilepathExistInDb[0].codeFiles);
 
-    if(!code_for_lang_present){
+    if(!codeForLangPresent){
 
 
         
         const id = nanoid(5)
-        const c_path = 'c'+id+'.c'
-        c_exe_file = path.resolve(code_dir,'c'+id)
-        cfilepath =  path.resolve(code_dir, c_path)  //important when trying to access the pat using path.jion error was thrown
+        const cPath = 'c'+id+'.c'
+        cExeFile = path.resolve(codeDir,'c'+id)
+        cFilePath =  path.resolve(codeDir, cPath)  //important when trying to access the pat using path.jion error was thrown
         // console.log("path resolve :",pyfilepath);
 
-        let update = {language:select_language, filepath:cfilepath};
+        let update = {language:selectLanguage, filepath:cFilePath};
         console.log("update ",update)
         let doc = await User.findOneAndUpdate(filter, {$push:{ codeFiles:{$each:[update]} }}, {
             returnOriginal: false
@@ -73,10 +73,10 @@ const c_execute = async (req,res,next) =>{
         // console.log("doc ",doc);
     }
     
-    let writecode =  fs.createWriteStream( cfilepath) //,{flags:'a'} flag is set if tryies to append file
+    let writecode =  fs.createWriteStream( cFilePath) //,{flags:'a'} flag is set if tryies to append file
         // console.log("write code :", writecode )
         
-        writecode.write(req.body.codearea)
+        writecode.write(codeArea)
         
         // console.log(req.body)
         
@@ -86,28 +86,28 @@ const c_execute = async (req,res,next) =>{
         return;
         })
         writecode.close();
-    // fileToExe(c_exe_file,cfilepath)
-   const compiler =  spawn(`gcc`, [cfilepath,'-o', c_exe_file])
+    // fileToExe(cExeFile,cFilePath)
+   const compiler =  spawn(`gcc`, [cFilePath,'-o', cExeFile])
         compiler.stdout.on('data', (data) => {
         console.log(`stdout: ${data}`);
         res.send(data)
         });
         compiler.stderr.on('data', (data) => {
         console.log(`compile-stderr: ${String(data)}`);
-        const updatedError = String(data).split(cfilepath).join('');
+        const updatedError = String(data).split(cFilePath).join('');
         return next(updatedError);
         });
         compiler.on('close', (data) => {
         if (data === 0) {
-            execute(c_exe_file);
+            execute(cExeFile);
         }
         });
     
 
-    // let exe_file = path.resolve(code_dir, c_exe_file)
-    console.log("c_exe_file 2:",c_exe_file)
-    async function execute(c_exe_file) {
-        const { stdout, stderr } = await exec_async(c_exe_file);
+    // let exe_file = path.resolve(codeDir, cExeFile)
+    console.log("cExeFile 2:",cExeFile)
+    async function execute(cExeFile) {
+        const { stdout, stderr } = await exec_async(cExeFile);
             console.log('stdout:', stdout);
             if(stdout){
                 res.status(200)
@@ -119,8 +119,8 @@ const c_execute = async (req,res,next) =>{
             }
             // console.error('stderr:', stderr);
         }
-    // function execute(c_exe_file){
-    //     const executor = spawn(c_exe_file, [],[]);
+    // function execute(cExeFile){
+    //     const executor = spawn(cExeFile, [],[]);
     //     executor.stdout.on('data', (output) => {
     //         console.log('stdout ',String(output));
     //         // callback('0', String(output)); // 0, no error
@@ -137,13 +137,13 @@ const c_execute = async (req,res,next) =>{
     // }
     
     
-    // let stdout = runExe(c_exe_file)
+    // let stdout = runExe(cExeFile)
     
     
         
 }
-// const fileToExe = (c_exe_file,cfilepath) => {
-//      exec(`gcc -o ${c_exe_file} ${cfilepath}` , (error, stdout, stderr) => {
+// const fileToExe = (cExeFile,cFilePath) => {
+//      exec(`gcc -o ${cExeFile} ${cFilePath}` , (error, stdout, stderr) => {
 //         if (error) {
 //             console.log(`error: ${error.message}`);
 //             return;
@@ -155,8 +155,8 @@ const c_execute = async (req,res,next) =>{
 //     })
 // }
 
-// function runExe(c_exe_file){
-//         exec(`${c_exe_file}`, (error, stdout, stderr) => {
+// function runExe(cExeFile){
+//         exec(`${cExeFile}`, (error, stdout, stderr) => {
 //         if (error) {
 //             console.log(`error: ${error.message}`);
 //             return;
