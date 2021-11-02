@@ -13,7 +13,7 @@ const fs = require('fs');
 const codeExecution = require( './routes/code_executions' );
 const indexRouter = require( './routes/index' );
 const authorizeUser = require( './routes/auth' );
-
+const user = require('./routes/user')
 // const {authenticate} = require('./middleware/auth')  //if this middleware is added in main or index js it
                                                         //will throw error 
 // app.use(authenticate)
@@ -36,6 +36,7 @@ var jsonParser = bodyParser.json();
 app.use( indexRouter );
 app.use('/codes', codeExecution );
 app.use( '/auth', authorizeUser );
+app.use('/user',user);
 app.use(errorHandler);
 
 //sample register user

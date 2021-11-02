@@ -20,6 +20,12 @@ const userSchema = new mongoose.Schema({
         minlength:8
 
     },
+    language:{
+        type:String
+    },
+    theme:{
+        type:String
+    },
     codeFiles:[codefileSchema]   
 })
 
