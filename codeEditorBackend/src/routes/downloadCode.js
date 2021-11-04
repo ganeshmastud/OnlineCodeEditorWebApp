@@ -18,7 +18,7 @@ const downloadCode = (req,res,next) => {
         codeFilePath = path.join(req.body.codeFilePath,foldername+'.java')
         
     }
-    console.log("code ",codeFilePath);
+    // console.log("code ",codeFilePath);
     res.download(codeFilePath, function(error){
         console.log("Error : ", error)
         next(error)
