@@ -15,6 +15,8 @@ const indexRouter = require( './routes/index' );
 const authorizeUser = require( './routes/auth' );
 const user = require('./routes/user')
 const loadCode = require('./routes/loadCode')
+
+const downloadCode =require('./routes/downloadCode')
 // const {authenticate} = require('./middleware/auth')  //if this middleware is added in main or index js it
                                                         //will throw error 
 // app.use(authenticate)
@@ -38,7 +40,8 @@ app.use( indexRouter );
 app.use('/codes', codeExecution );
 app.use( '/auth', authorizeUser );
 app.use('/user',user);
-app.use('/loadcode',loadCode);
+app.use('/loadcode',jsonParser,loadCode);
+app.use('/downloadcode',jsonParser, downloadCode)
 app.use(errorHandler);
 
 //sample register user
