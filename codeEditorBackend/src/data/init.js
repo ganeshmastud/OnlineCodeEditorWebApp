@@ -1,6 +1,6 @@
 // create the models to talk to the DB
-require( '../models/user' );
-require( '../models/code_files' );
+require( '@/models/user' );
+require( '@/models/code_files' );
 
 
 const mongoose = require( 'mongoose' );
