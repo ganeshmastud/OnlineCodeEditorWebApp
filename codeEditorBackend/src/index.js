@@ -47,7 +47,7 @@ app.use(errorHandler);
 
 
 app.use( function(req,res,next){
-    console.log(path.join(path.resolve(process.cwd(),'src'), 'public', 'index.html'));
+    // console.log(path.join(path.resolve(process.cwd(),'src'), 'public', 'index.html'));
     res.sendFile( path.join(path.resolve(process.cwd(),'src'), 'public', 'index.html'));
 });
 //sample register user
