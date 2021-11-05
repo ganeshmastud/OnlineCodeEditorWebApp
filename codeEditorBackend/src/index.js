@@ -59,8 +59,6 @@ app.use( function(req,res,next){
 //   // res.send(User.find().pretty())
 //   res.json(result)
 //   res.send("ok")
-
-  
 // })
 // app.get('/', (req, res) => {
 //   res.send('Hello World!')
