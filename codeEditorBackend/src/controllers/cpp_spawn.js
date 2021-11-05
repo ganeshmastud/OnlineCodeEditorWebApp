@@ -15,7 +15,7 @@ const exec_async = util.promisify(require('child_process').exec);
 const cpp_execute = async (req,res,next) =>{
   
     try{
-        console.log("you are in cpp exec flie in controller");
+        // console.log("you are in cpp exec flie in controller");
         if(!req.body){
             const error = new Error( 'no data received in request' );
             error.status = 404;
@@ -69,7 +69,7 @@ const cpp_execute = async (req,res,next) =>{
             cppExeFile = path.resolve(code_dir,'cpp'+id)
             cppFilePath = path.resolve(code_dir, cppPath)  //important when trying to access the path using path.join error was thrown
             // console.log("path resolve :",pyfilepath);
-            console.log("cppFilePath ",cppFilePath)
+            // console.log("cppFilePath ",cppFilePath)
             let update = {language:selectLanguage, filepath:cppFilePath};
             // console.log("update ",update)
             let doc = await User.findOneAndUpdate(filter, {$push:{ codeFiles:{$each:[update]} }}, {
@@ -86,16 +86,16 @@ const cpp_execute = async (req,res,next) =>{
             // console.log(req.body)
             
             writecode.on('error', error =>{
-            console.log("error is :",error.message);
+            // console.log("error is :",error.message);
                 return next(error.message);
             })
 
              const compiler =  spawn(`g++`, [cppFilePath,'-o', cppExeFile])
                 compiler.stdout.on('data', (data) => {
-                    console.log(`stdout: ${data}`);
+                    // console.log(`stdout: ${data}`);
                 });
                 compiler.stderr.on('data', (data) => {
-                    console.log(`compile-stderr: ${String(data)}`);
+                    // console.log(`compile-stderr: ${String(data)}`);
                      const updatedError = String(data).split(cppFilePath).join('');
                      return next(updatedError);
                     // callback('1', String(data)); // 1, compile error

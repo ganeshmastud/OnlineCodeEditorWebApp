@@ -38,7 +38,7 @@ const register = async( req, res, next ) => {
         if(register_errors.email_err.length > 0){
             errors.push(register_errors.email_err);
         }
-        console.log("register_errors ",errors)
+        // console.log("register_errors ",errors)
         const error=new Error(errors)
         // return next(error);
         res.send(errors);

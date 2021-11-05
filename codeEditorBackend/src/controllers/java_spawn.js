@@ -88,13 +88,13 @@ const java_execute = async (req,res,next) =>{
                 pathsObj.codeArea=''
                 
                 function fileToExe(pathsObj) {
-                    console.log("in filetoExe",pathsObj.javaFilePath);
+                    // console.log("in filetoExe",pathsObj.javaFilePath);
                     const compiler = spawn(`javac`, [pathsObj.javaFilePath])
                         compiler.stdout.on('data', (data) => {
-                            console.log(`stdout: ${data}`);
+                            // console.log(`stdout: ${data}`);
                         });
                         compiler.stderr.on('data', (data) => {
-                            console.log(`compile-stderr: ${String(data)}`);
+                            // console.log(`compile-stderr: ${String(data)}`);
                             const updatedError = String(data).split(pathsObj.javaFilePath).join('');
                             return next('Line '+updatedError);
                             // callback('1', String(data)); // 1, compile error
@@ -119,19 +119,19 @@ const java_execute = async (req,res,next) =>{
                 //executing java file
                 async function runExe(javaFileDir, javaExeFile){
 
-                    console.log("in run exe ",javaExeFile)
+                    // console.log("in run exe ",javaExeFile)
                     javaExeFile = javaExeFile.split('.')[0]
                     // console.log("javaExeFile ",javaExeFile)
                     const {stdout,stderr} = await exec_java_file(`java -cp ${javaFileDir}; ${javaExeFile}`);
-                    console.log("in runExe",stdout, stderr)
+                    // console.log("in runExe",stdout, stderr)
                     if(stderr){
-                        console.error('stderr:', stderr);
+                        // console.error('stderr:', stderr);
                          const updatedError = stderr.split(javaExeFile).join('');
                         return next(updatedError);
                         // return next(stderr);
                     }
                         if(stdout){
-                        console.log('stdout:', stdout);
+                        // console.log('stdout:', stdout);
                         res.status(200);
                         res.send(stdout);
                     }
@@ -149,8 +149,8 @@ const java_execute = async (req,res,next) =>{
                 
         })
         .catch(err=>{
-            console.log("promise rejectd");
-            console.log("err :",err, err.message)
+            // console.log("promise rejectd");
+            // console.log("err :",err, err.message)
             next(err.message);
         })
         
@@ -160,7 +160,7 @@ const java_execute = async (req,res,next) =>{
         
     }
     catch(error){
-        console.error("main try catch error");
+        // console.error("main try catch error");
         next(error.message)
     }
         
@@ -195,7 +195,7 @@ const java_execute = async (req,res,next) =>{
                     
             } catch (err) {
                 const err_msg ="Failed to create a directory"
-                console.error(err_msg);
+                // console.error(err_msg);
                 next(err_msg)
             }
             
@@ -226,7 +226,7 @@ const java_execute = async (req,res,next) =>{
             classfile = files[1];
         } catch (err) {
             const err_msg ='Failed to read a java file directory'
-            console.error(err_msg);
+            // console.error(err_msg);
             next(err_msg)
         }
        

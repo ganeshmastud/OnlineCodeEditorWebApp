@@ -8,7 +8,7 @@ const authenticate = ( req, res, next ) => {
         error.status = 401;
         return next( error );
     } else{
-        console.log("Token exist :",token)
+        // console.log("Token exist :",token)
     }
     
     // 'abcd' is the secret key - please store this in process.env.* where * is some environment variable like JWT_SECRET (say)

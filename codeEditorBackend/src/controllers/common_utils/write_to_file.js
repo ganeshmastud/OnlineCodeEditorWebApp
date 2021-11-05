@@ -10,7 +10,8 @@ async function writeToFileFn(javafilepath, codearea){
     // console.log(req.body)
     
     writecode.on('error', error =>{
-    console.log("error is :",error.message);
+    // console.log("error is :",error.message);
+    next(error);
     })
     return;
 }  

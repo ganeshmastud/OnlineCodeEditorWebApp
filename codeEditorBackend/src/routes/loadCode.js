@@ -11,12 +11,12 @@ const loadCode = (req,res,next) => {
     let data ='';
     if(req.body.language==='java'){
         codeFilePath = codeFilePath.replace('\\','\\\\')
-        console.log(codeFilePath)
+        // console.log(codeFilePath)
         let filename = codeFilePath.split("\\");
         let foldername = filename[filename.length-1]
         codeFilePath = path.join(req.body.codeFilePath,foldername+'.java')
     }
-    console.log(codeFilePath)
+    // console.log(codeFilePath)
     const readStream = fs.createReadStream(codeFilePath)
     readStream.setEncoding("UTF8");
 
@@ -32,7 +32,7 @@ const loadCode = (req,res,next) => {
 
     readStream.on("error", (error) => {
         // console.log(error.stack);
-        console.log("cant fetch file")
+        // console.log("cant fetch file")
         return next(error)
     });
     

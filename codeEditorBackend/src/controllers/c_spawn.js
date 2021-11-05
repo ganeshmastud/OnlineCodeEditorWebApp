@@ -13,7 +13,7 @@ const util = require('util');
 const exec_async = util.promisify(require('child_process').exec);
 const c_execute = async (req,res,next) =>{
 
-    console.log("you are in c exec flie in controller");
+    // console.log("you are in c exec flie in controller");
     if(!req.body){
         const error = new Error( 'no data received in request' );
         error.status = 404;
@@ -47,7 +47,7 @@ const c_execute = async (req,res,next) =>{
                 cExeFile =codeFile.filepath;
                 console.log("cExeFile ",cExeFile);
                 cExeFile =cExeFile.slice(0,-2)
-                console.log("file path exist")
+                // console.log("file path exist")
                 return;
             }
         } )
@@ -66,7 +66,7 @@ const c_execute = async (req,res,next) =>{
         // console.log("path resolve :",pyfilepath);
 
         let update = {language:selectLanguage, filepath:cFilePath};
-        console.log("update ",update)
+        // console.log("update ",update)
         let doc = await User.findOneAndUpdate(filter, {$push:{ codeFiles:{$each:[update]} }}, {
             returnOriginal: false
         })
@@ -81,7 +81,7 @@ const c_execute = async (req,res,next) =>{
         // console.log(req.body)
         
         writecode.on('error', error =>{
-        console.log("error is :",error.message);
+        // console.log("error is :",error.message);
         next(error.message)
         return;
         })
@@ -89,11 +89,11 @@ const c_execute = async (req,res,next) =>{
     // fileToExe(cExeFile,cFilePath)
    const compiler =  spawn(`gcc`, [cFilePath,'-o', cExeFile])
         compiler.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`);
+        // console.log(`stdout: ${data}`);
         res.send(data)
         });
         compiler.stderr.on('data', (data) => {
-        console.log(`compile-stderr: ${String(data)}`);
+        // console.log(`compile-stderr: ${String(data)}`);
         const updatedError = String(data).split(cFilePath).join('');
         return next(updatedError);
         });
@@ -108,13 +108,13 @@ const c_execute = async (req,res,next) =>{
     console.log("cExeFile 2:",cExeFile)
     async function execute(cExeFile) {
         const { stdout, stderr } = await exec_async(cExeFile);
-            console.log('stdout:', stdout);
+            // console.log('stdout:', stdout);
             if(stdout){
                 res.status(200)
                 res.send(stdout)
             }
             if(stderr){
-                console.error('exe stderr:', stderr);
+                // console.error('exe stderr:', stderr);
                 next(stderr)
             }
             // console.error('stderr:', stderr);

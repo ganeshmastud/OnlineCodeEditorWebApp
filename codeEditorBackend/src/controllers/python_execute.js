@@ -12,7 +12,7 @@ const nanoid = require('nanoid')
 
 const python_execute = async (req,res,next) =>{
 
-    console.log("you are in python exec flie in controller");
+    // console.log("you are in python exec flie in controller");
     if(!req.body){
         const error = new Error( 'no data received in request' );
         error.status = 404;
@@ -43,7 +43,7 @@ const python_execute = async (req,res,next) =>{
         if(codeFile.language === selectLanguage){
             codeForLangPresent=true;
             pyFilePath = codeFile.filepath;
-            console.log("file path exist")
+            // console.log("file path exist")
             return;
         }
     } )
@@ -74,24 +74,24 @@ const python_execute = async (req,res,next) =>{
         
         writecode.on('error', error =>{
             
-        console.log("error is :",error.message);
+        // console.log("error is :",error.message);
         return next(error.message)
         })
 
     await exec(`python ${pyFilePath}` , (error, stdout, stderr) => {
     if (error) {
-        console.log(`error: ${error.message}`);
+        // console.log(`error: ${error.message}`);
         // const replace_str = new RegExp(pyFilePath,'g')
         // const updatedError = error.message.replace(replace_str, '')
         const updatedError = error.message.split(pyFilePath).join('');
         return next(updatedError);
     }
     if (stderr) {
-        console.log(`stderr: ${stderr}`);
+        // console.log(`stderr: ${stderr}`);
         
         return next(stderr);
     }
-    console.log(`stdout: ${stdout}`);
+    // console.log(`stdout: ${stdout}`);
     res.status(200)
     res.send(stdout);
     return;
