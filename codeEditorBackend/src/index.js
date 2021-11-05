@@ -33,15 +33,15 @@ var jsonParser = bodyParser.json();
 
 
 
-
+app.use( express.static(path.join(process.cwd(), 'public')));
 
 // api routers
 app.use( indexRouter );
-app.use('/codes', codeExecution );
-app.use( '/auth', authorizeUser );
-app.use('/user',user);
-app.use('/loadcode',jsonParser,loadCode);
-app.use('/downloadcode',jsonParser, downloadCode)
+app.use('/api/codes', codeExecution );
+app.use('/api/auth', authorizeUser );
+app.use('/api/user',user);
+app.use('/api/loadcode',jsonParser,loadCode);
+app.use('/api/downloadcode',jsonParser, downloadCode)
 app.use(errorHandler);
 
 //sample register user

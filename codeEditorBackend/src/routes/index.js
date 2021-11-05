@@ -4,6 +4,6 @@ const { postMessage } = require( '../controllers/index' );
 
 const router = express.Router();
 
-router.post( '/', postMessage );
+router.post( '/api/', postMessage );
 
 module.exports = router;
