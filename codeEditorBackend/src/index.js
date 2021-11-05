@@ -23,6 +23,7 @@ const downloadCode =require('./routes/downloadCode')
 const errorHandler = require('./middleware/error');
 
 app.use(bodyParser.urlencoded({ extended: true }))
+if(process.env.NODE_ENV === 'development')
 app.use(cors({
         origin:"*"
     })
@@ -44,6 +45,10 @@ app.use('/api/loadcode',jsonParser,loadCode);
 app.use('/api/downloadcode',jsonParser, downloadCode)
 app.use(errorHandler);
 
+
+app.use( function(req,res,next){
+    res.sendFile( path.join(process.cwd(), 'public', 'index.html'));
+});
 //sample register user
 // const mongoose = require( 'mongoose' );
 // const User = mongoose.model('User')

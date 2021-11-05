@@ -121,7 +121,7 @@ const login = async ( req, res, next ) => {
                 };
 
                 // 'abcd' is the secret key - please store this in process.env.* where * is some environment variable like JWT_SECRET (say)
-                 jwt.sign( claims, 'JWT_SECRET_KEY' /* process.env.JWT_SECRET */, { expiresIn: 24 * 60 * 60 }, ( err, token ) => {
+                 jwt.sign( claims, process.env.JWT_SECRET_KEY /* process.env.JWT_SECRET */, { expiresIn: 24 * 60 * 60 }, ( err, token ) => {
                     if( err ) {
                         err.status = 500;
                         return next( err );
