@@ -34,7 +34,7 @@ var jsonParser = bodyParser.json();
 
 
 
-app.use( express.static(path.join(path.resolve(process.cwd(),'src'), 'public')));
+app.use( express.static(path.join(rocess.cwd(),'src', 'public')));
 
 // api routers
 app.use( indexRouter );
@@ -48,7 +48,7 @@ app.use(errorHandler);
 
 app.use( function(req,res,next){
     // console.log(path.join(path.resolve(process.cwd(),'src'), 'public', 'index.html'));
-    res.sendFile( path.join(path.resolve(process.cwd(),'src'), 'public', 'index.html'));
+    res.sendFile( path.join(process.cwd(),'src', 'public', 'index.html'));
 });
 //sample register user
 // const mongoose = require( 'mongoose' );
