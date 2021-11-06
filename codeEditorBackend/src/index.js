@@ -33,7 +33,7 @@ var jsonParser = bodyParser.json();
 
 
 
-console.log("path",express.static(path.join(process.cwd(),'src', 'public')))
+// console.log("path",express.static(path.join(process.cwd(),'src', 'public')))
 app.use( express.static(path.join(process.cwd(),'src', 'public')));
 
 // api routers
@@ -47,67 +47,12 @@ app.use(errorHandler);
 
 
 app.use( function(req,res,next){
+    console.log("app routes");
     // console.log(path.join(path.resolve(process.cwd(),'src'), 'public', 'index.html'));
     console.log("in // ", path.join(process.cwd(),'src', 'public', 'index.html'));
     res.sendFile( path.join(process.cwd(),'src', 'public', 'index.html'));
 });
-//sample register user
-// const mongoose = require( 'mongoose' );
-// const User = mongoose.model('User')
-// app.get('/register', (req,res) =>{
-  
-//   const result = User.create({email:'tonystark@gmail.com',password:'tony@123'})
-//   // console.log(User.find().pretty());
-//   // res.send(User.find().pretty())
-//   res.json(result)
-//   res.send("ok")
-// })
-// app.get('/', (req, res) => {
-//   res.send('Hello World!')
-// })
 
-// app.post('/',jsonParser, async (req,res) =>{
-//     // console.log(req);
-//     // console.log(req.query)
-//     // console.log("path :",__dirname)
-//     let writecode = fs.createWriteStream( path.join( __dirname, 'dummy.py')) //,{flags:'a'} flag is set if tryies to append file
-//     // console.log("write code :", writecode )
-//     writecode.write('\n')
-//     writecode.write(req.body.codearea)
-//     writecode.write('\n')
-//     // console.log(req.body)
-    
-//     writecode.on('error', error =>{
-//       console.log("error is :",error.message);
-//     })
-//     exec("python dummy.py" , (error, stdout, stderr) => {
-//     if (error) {
-//         console.log(`error: ${error.message}`);
-//         return;
-//     }
-//     if (stderr) {
-//         console.log(`stderr: ${stderr}`);
-//         return;
-//     }
-//     console.log(`stdout: ${stdout}`);
-//     res.send(stdout);
-//     })
-// })
-
-
-// db.users.updateOne({email:"johnwick@gmail.com"},
-//     {$set:
-//       {
-         
-//             codeFiles:{
-//                [{language:"java",path:""}] 
-//             }
-           
-      
-//       }
-//     }
-    
-//   })
 console.log("in index js");
 app.listen(port,  error => {
     if( error ) {
@@ -116,5 +61,4 @@ app.listen(port,  error => {
     }
     // console.log( `Check http://localhost:${port}` );
   })
-
 
