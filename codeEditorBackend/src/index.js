@@ -33,7 +33,7 @@ var jsonParser = bodyParser.json();
 
 
 
-
+console.log("path",express.static(path.join(process.cwd(),'src', 'public')))
 app.use( express.static(path.join(process.cwd(),'src', 'public')));
 
 // api routers
@@ -48,6 +48,7 @@ app.use(errorHandler);
 
 app.use( function(req,res,next){
     // console.log(path.join(path.resolve(process.cwd(),'src'), 'public', 'index.html'));
+    console.log("in // ", path.join(process.cwd(),'src', 'public', 'index.html'));
     res.sendFile( path.join(process.cwd(),'src', 'public', 'index.html'));
 });
 //sample register user
@@ -107,7 +108,7 @@ app.use( function(req,res,next){
 //     }
     
 //   })
-
+console.log("in index js");
 app.listen(port,  error => {
     if( error ) {
         console.error( error.message );
