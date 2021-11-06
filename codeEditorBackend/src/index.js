@@ -110,7 +110,7 @@ app.use( function(req,res,next){
 
 app.listen(port,  error => {
     if( error ) {
-        // console.error( error.message );
+        console.error( error.message );
         return;
     }
     // console.log( `Check http://localhost:${port}` );
