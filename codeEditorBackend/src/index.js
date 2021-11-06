@@ -3,7 +3,7 @@ require('dotenv').config({path: path.resolve(__dirname,'.env')})
 require( './data/init' );
 const express = require('express')
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const { exec } = require("child_process");
@@ -52,7 +52,7 @@ app.use('/', function(req,res,next){
     console.log("in // ", path.join(process.cwd(),'src', 'public', 'index.html'));
     res.sendFile( path.join(process.cwd(),'src', 'public', 'index.html'));
 });
-
+ console.log("in // ", path.join(process.cwd(),'src', 'public', 'index.html'));
 console.log("in index js");
 app.listen(port,  error => {
     if( error ) {
