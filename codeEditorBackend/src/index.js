@@ -34,7 +34,7 @@ var jsonParser = bodyParser.json();
 
 
 
-app.use( express.static(path.join(rocess.cwd(),'src', 'public')));
+app.use( express.static(path.join(process.cwd(),'src', 'public')));
 
 // api routers
 app.use( indexRouter );
