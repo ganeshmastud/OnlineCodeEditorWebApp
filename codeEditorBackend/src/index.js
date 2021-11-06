@@ -46,7 +46,7 @@ app.use('/api/downloadcode',jsonParser, downloadCode)
 app.use(errorHandler);
 
 
-app.use( function(req,res,next){
+app.use('/', function(req,res,next){
     console.log("app routes");
     // console.log(path.join(path.resolve(process.cwd(),'src'), 'public', 'index.html'));
     console.log("in // ", path.join(process.cwd(),'src', 'public', 'index.html'));
