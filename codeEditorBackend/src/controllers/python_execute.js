@@ -56,7 +56,7 @@ const python_execute = async (req,res,next) =>{
         const id = nanoid(5)
         const pythonPath = 'py'+id+'.py'
         pyFilePath = path.resolve(codeDir, pythonPath)  //important when trying to access the pat using path.jion error was thrown
-        // console.log("path resolve :",pyFilePath);
+        console.log("path resolve :",pyFilePath);
 
         const update = {language:selectLanguage, filepath:pyFilePath};
         let doc = await User.findOneAndUpdate(filter, {$push:{ codeFiles:update }}, {
@@ -77,7 +77,6 @@ const python_execute = async (req,res,next) =>{
         // console.log("error is :",error.message);
         return next(error.message)
         })
-
     await exec(`python ${pyFilePath}` , (error, stdout, stderr) => {
     if (error) {
         // console.log(`error: ${error.message}`);

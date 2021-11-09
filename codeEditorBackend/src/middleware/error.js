@@ -1,5 +1,5 @@
 const errorHandler = ( error, req, res, next ) => {
-    // console.log("received error in error js",String(error),"err status ", error.status)
+    console.log("received error in error js",String(error),"err status ", error.status)
     const msg = error.message?error.message : error
     if(error.status){
         res.status(error.status);

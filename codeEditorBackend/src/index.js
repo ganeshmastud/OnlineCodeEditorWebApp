@@ -23,18 +23,20 @@ const downloadCode =require('./routes/downloadCode')
 const errorHandler = require('./middleware/error');
 
 app.use(bodyParser.urlencoded({ extended: true }))
-if(process.env.NODE_ENV === 'development')
-app.use(cors({
-        origin:"*"
-    })
-)
+// if(process.env.NODE_ENV === 'development'){
+    app.use(cors({
+        origin:"*",
+        optionsSuccessStatus: 200
+        })
+    )
+// }
+
 var jsonParser = bodyParser.json();
 // console.log("code_execution :",code_execution); 
 
 
 
-// console.log("path",express.static(path.join(process.cwd(),'src', 'public')))
-app.use( express.static(path.join(process.cwd(),'src', 'public')));
+// app.use( express.static(path.join(process.cwd(),'src', 'public')));
 
 // api routers
 app.use( indexRouter );
@@ -46,14 +48,16 @@ app.use('/api/downloadcode',jsonParser, downloadCode)
 app.use(errorHandler);
 
 
-app.use('/', function(req,res,next){
-    console.log("app routes");
-    // console.log(path.join(path.resolve(process.cwd(),'src'), 'public', 'index.html'));
-    console.log("in // ", path.join(process.cwd(),'src', 'public', 'index.html'));
-    res.sendFile( path.join(process.cwd(),'src', 'public', 'index.html'));
-});
- console.log("in // ", path.join(process.cwd(),'src', 'public', 'index.html'));
-console.log("in index js");
+// app.use('/', function(req,res,next){
+//     console.log("app routes");
+//     // console.log(path.join(path.resolve(process.cwd(),'src'), 'public', 'index.html'));
+//     console.log("in // ", path.join(process.cwd(),'src', 'public', 'index.html'));
+//     res.sendFile( path.join(process.cwd(),'src', 'public', 'index.html'));
+// });
+
+
+//  console.log("in // ", path.join(process.cwd(),'src', 'public', 'index.html'));
+// console.log("in index js");
 app.listen(port,  error => {
     if( error ) {
         console.error( error.message );

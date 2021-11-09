@@ -1,17 +1,16 @@
 #include <stdio.h>  
 #include <conio.h>  
-void main()  
+int main()  
 {  
-    int i, j, rows=3;  
-   
+    int i, j, rows=4;  
     printf("\n");  
-    for (i = 1; i <= rows; ++i) // outer loop  
+    for (i = rows; i > 0; i--) // define the outer loop  
     {  
-        for (j = 1; j <= i; ++j) // inner loop  
+        for (j = i; j > 0; j--) // define the inner loop  
         {  
             printf ("* "); // print the Star  
         }  
         printf ("\n");   
     }  
-    getch();      
+    return 0;
 }  

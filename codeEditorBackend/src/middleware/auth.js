@@ -1,22 +1,25 @@
 const jwt = require( 'jsonwebtoken' );
 
-const authenticate = ( req, res, next ) => {
-    const token = req.header( 'Authorization' );
-    // console.log("token ",token);
+const authenticate = async ( req, res, next ) => {
+    const token = await req.header( 'Authorization' );
+    console.log("token ",token);
     if( !token ) {
         const error = new Error( 'Token is not sent' );
         error.status = 401;
         return next( error );
     } else{
-        // console.log("Token exist :",token)
+        console.log("Token exist :",token)
     }
     
     // 'abcd' is the secret key - please store this in process.env.* where * is some environment variable like JWT_SECRET (say)
-    jwt.verify( token, 'JWT_SECRET_KEY', async ( err, claims ) => {
+    // console.log("process.env.JWT_SECRET_KEY",process.env.JWT_SECRET_KEY)
+    jwt.verify( token, process.env.JWT_SECRET_KEY, async ( err, claims ) => {
         if( err ) {
-            const error = new Error( 'Please login first to get access.' );
+            console.log("err in jwt verify",err);
+            const error = new Error( 'Token is expired, Please login first to get access.' );
             error.status = 403;
-            return next( error );
+            next( error );
+            return;
         }
 
         // res.locals ({}) is used to share information between one middleware and another

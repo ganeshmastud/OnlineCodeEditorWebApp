@@ -1,6 +1,6 @@
 class Simple{  
     public static void main(String args[]){  
-     System.out.println("Hello Java boy cool \n");  
-     System.out.println(" ''/ `~` friday saturday fullday"); 
+     System.out.println("Hello Java cool ");  
+     System.out.println(" ''/ '.'  `~` saturday fullday"); 
     }  
 }  

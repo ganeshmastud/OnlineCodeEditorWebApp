@@ -12,7 +12,9 @@ const nanoid = require('nanoid')
 const util = require('util');
 const exec_async = util.promisify(require('child_process').exec);
 const c_execute = async (req,res,next) =>{
+    try{
 
+    
     // console.log("you are in c exec flie in controller");
     if(!req.body){
         const error = new Error( 'no data received in request' );
@@ -87,17 +89,19 @@ const c_execute = async (req,res,next) =>{
         })
         writecode.close();
     // fileToExe(cExeFile,cFilePath)
+
    const compiler =  spawn(`gcc`, [cFilePath,'-o', cExeFile])
         compiler.stdout.on('data', (data) => {
         // console.log(`stdout: ${data}`);
         res.send(data)
         });
         compiler.stderr.on('data', (data) => {
-        // console.log(`compile-stderr: ${String(data)}`);
+        console.log(`compile-stderr: ${String(data)}`);
         const updatedError = String(data).split(cFilePath).join('');
         return next(updatedError);
         });
         compiler.on('close', (data) => {
+            console.log("c spawn data",data);
         if (data === 0) {
             execute(cExeFile);
         }
@@ -107,17 +111,23 @@ const c_execute = async (req,res,next) =>{
     // let exe_file = path.resolve(codeDir, cExeFile)
     console.log("cExeFile 2:",cExeFile)
     async function execute(cExeFile) {
-        const { stdout, stderr } = await exec_async(cExeFile);
-            // console.log('stdout:', stdout);
-            if(stdout){
-                res.status(200)
-                res.send(stdout)
+            try{
+                const { stdout, stderr } = await exec_async(cExeFile);
+                // console.log('stdout:', stdout);
+                if(stdout){
+                    res.status(200)
+                    res.send(stdout)
+                }
+                if(stderr){
+                    console.error('exe stderr:', stderr);
+                    next(stderr)
+                }
+                // console.error('stderr:', stderr);
+
+            } catch(err) {
+                next(err)
             }
-            if(stderr){
-                // console.error('exe stderr:', stderr);
-                next(stderr)
-            }
-            // console.error('stderr:', stderr);
+       
         }
     // function execute(cExeFile){
     //     const executor = spawn(cExeFile, [],[]);
@@ -140,7 +150,10 @@ const c_execute = async (req,res,next) =>{
     // let stdout = runExe(cExeFile)
     
     
-        
+    }
+    catch(err){
+        next(err);
+    }     
 }
 // const fileToExe = (cExeFile,cFilePath) => {
 //      exec(`gcc -o ${cExeFile} ${cFilePath}` , (error, stdout, stderr) => {

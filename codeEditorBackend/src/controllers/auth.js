@@ -18,7 +18,7 @@ const register = async( req, res, next ) => {
     // console.log("user in reg", user)
     // console.log("register_validation ",typeof register_validation.register_validation)
     const register_errors = register_validation.register_validation(user)
-    let errors=[]
+    let errors=[] 
     // console.log("register_errors ", register_errors)
     if(register_errors.flag===false){
         // errors.concat(errors,register_errors.username_err)
@@ -121,7 +121,7 @@ const login = async ( req, res, next ) => {
                 };
 
                 // 'abcd' is the secret key - please store this in process.env.* where * is some environment variable like JWT_SECRET (say)
-                 jwt.sign( claims, process.env.JWT_SECRET_KEY /* process.env.JWT_SECRET */, { expiresIn: 24 * 60 * 60 }, ( err, token ) => {
+                 jwt.sign( claims, process.env.JWT_SECRET_KEY/* process.env.JWT_SECRET */, { expiresIn: "24h" }, ( err, token ) => {
                     if( err ) {
                         err.status = 500;
                         return next( err );
