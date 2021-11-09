@@ -23,13 +23,13 @@ const downloadCode =require('./routes/downloadCode')
 const errorHandler = require('./middleware/error');
 
 app.use(bodyParser.urlencoded({ extended: true }))
-// if(process.env.NODE_ENV === 'development'){
+if(process.env.NODE_ENV === 'development'){
     app.use(cors({
         origin:"*",
         optionsSuccessStatus: 200
         })
     )
-// }
+}
 
 var jsonParser = bodyParser.json();
 // console.log("code_execution :",code_execution); 
