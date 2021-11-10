@@ -2,7 +2,7 @@
 #include <conio.h>  
 int main()  
 {  
-    int i, j, rows=3; 
+    int i, j, rows=5; 
     printf("\n");  
     for (i = rows; i > 0; i--) // define the outer loop  
     {  

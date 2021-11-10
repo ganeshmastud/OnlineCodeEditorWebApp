@@ -1,4 +1,4 @@
-class Simple {
+class S {
 
   public static void main(String[] args) {
     int rows = 5;
