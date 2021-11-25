@@ -1,4 +1,5 @@
 require( '../data/init' );
+require( '../data/init' );
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -34,7 +35,7 @@ const python_execute = async (req,res,next) =>{
     // const pyFilePath=path.join(codeDir, 'dummy.py')
     const filter = {"_id" : userId}
     let codeForLangPresent=false;
-    const codeDir = 'CodeFiles/python';
+    const codeDir = 'src/CodeFiles/python';
 
     let pyFilePath =''
     const ifFilepathExistInDb = await User.find(filter)

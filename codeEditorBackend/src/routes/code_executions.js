@@ -10,10 +10,10 @@ const {authenticate} = require('../middleware/auth')
 const {request_data_code_size} =require('../middleware/req_datasize')
 const router = express.Router();
 // console.log("python_execute ",python_execute)
-router.post('/python',jsonParser,request_data_code_size,authenticate,python_execute);
-router.post('/java',jsonParser,authenticate,java_execute);
-router.post('/c',jsonParser,authenticate,c_execute);
-router.post('/cpp',jsonParser,authenticate,cpp_execute);
+router.post('/python',authenticate,jsonParser,request_data_code_size,python_execute);
+router.post('/java',authenticate,jsonParser,java_execute);
+router.post('/c',authenticate,jsonParser,c_execute);
+router.post('/cpp',authenticate,jsonParser,cpp_execute);
 
 module.exports = router;
 

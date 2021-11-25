@@ -77,7 +77,7 @@ const login = async ( req, res, next ) => {
     // console.log("in login funciton")
     // this has { email: string, password: string }
     const userdata = req.body;
-
+    console.log("userdata in auth login ",userdata);
     if( !userdata ) {
         const error = new Error( 'Login details not sent in request body' );
         next( error );

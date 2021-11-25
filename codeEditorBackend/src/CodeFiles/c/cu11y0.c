@@ -2,7 +2,7 @@
 #include <conio.h>  
 int main()  
 {  
-    int i, j, rows=5; 
+    int i, j, rows=3; 
     printf("\n");  
     for (i = rows; i > 0; i--) // define the outer loop  
     {  
@@ -10,7 +10,7 @@ int main()
         {  
             printf ("* "); // print the Star  
         }  
-        printf ("\n");   
+        printf ("\n");  
     }  
     return 0;      
 }
